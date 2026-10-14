@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-accent="emerald">
+<html lang="ar" dir="rtl" data-accent="ocean" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -16,7 +16,8 @@
 try {
   var L = JSON.parse(localStorage.getItem("r1t:look") || "{}");
   if (L.accent) document.documentElement.dataset.accent = L.accent;
-  if (L.mode && L.mode !== "auto") document.documentElement.dataset.theme = L.mode;
+  if (L.mode === "auto") delete document.documentElement.dataset.theme;
+  else if (L.mode) document.documentElement.dataset.theme = L.mode;
   document.documentElement.dataset.font = L.font || "naskh";
 } catch (e) {}
 </script>
@@ -27,6 +28,12 @@ try {
 [data-accent="sunset"]{--a1:#c2410c;--a2:#e11d48;--a-soft:#fde5d8;--a-ink:#9a3412}
 [data-accent="rose"]{--a1:#be185d;--a2:#fb7185;--a-soft:#fce4ef;--a-ink:#9d174d}
 [data-accent="night"]{--a1:#0f172a;--a2:#475569;--a-soft:#e2e8f0;--a-ink:#0f172a}
+[data-accent="indigo"]{--a1:#3730a3;--a2:#6366f1;--a-soft:#e0e7ff;--a-ink:#312e81}
+[data-accent="sky"]{--a1:#0369a1;--a2:#06b6d4;--a-soft:#cffafe;--a-ink:#155e75}
+[data-accent="forest"]{--a1:#14532d;--a2:#16a34a;--a-soft:#dcfce7;--a-ink:#14532d}
+[data-accent="gold"]{--a1:#92400e;--a2:#d97706;--a-soft:#fef3c7;--a-ink:#78350f}
+[data-accent="wine"]{--a1:#701a2e;--a2:#be123c;--a-soft:#ffe4e6;--a-ink:#881337}
+[data-accent="coffee"]{--a1:#44291a;--a2:#9a6b4f;--a-soft:#f1e7df;--a-ink:#44291a}
 :root{
   --bg:color-mix(in srgb,var(--a1) 4%,#f7f6f2);
   --surface:#ffffff; --surface-2:#f1f0eb; --line:#e7e4dc;
@@ -308,11 +315,11 @@ footer{color:var(--ink-3);font-size:12px;padding:16px 0 20px;line-height:1.8;tex
 .opt.c[aria-pressed="true"]{border-color:var(--cbd);background:var(--cbd);color:var(--on)}
 .opt.m[aria-pressed="true"]{border-color:var(--mcx);background:var(--mcx);color:var(--on)}
 .opt.d[aria-pressed="true"]{border-color:var(--dops);background:var(--dops);color:var(--on)}
-.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px 8px}
 .sw{aspect-ratio:1;border-radius:14px;border:3px solid transparent;position:relative;padding:0}
 .sw[aria-pressed="true"]{border-color:var(--ink)}
 .sw[aria-pressed="true"]::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:16px}
-.swl{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;font-size:11px;color:var(--ink-3);text-align:center;margin-top:4px}
+.swc{display:grid;gap:4px;justify-items:stretch;text-align:center;font-size:11.5px;color:var(--ink-3)}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
 .seg button{border:0;background:transparent;border-radius:10px;padding:8px 6px;font-size:13px;color:var(--ink-2)}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
@@ -470,11 +477,10 @@ footer{color:var(--ink-3);font-size:12px;padding:16px 0 20px;line-height:1.8;tex
       <div class="ctl"><button data-step="iterTarget" data-d="-1">−</button><b id="iterVal">12</b><button data-step="iterTarget" data-d="1">+</button></div></div>
     <h3>لون الصفحة</h3>
     <div class="swatches" id="swatches"></div>
-    <div class="swl" id="swl"></div>
+    <h3>الوضع</h3>
+    <div class="seg" id="modeSeg"><button data-mode="light">فاتح</button><button data-mode="dark">داكن</button><button data-mode="auto">حسب الجهاز</button></div>
     <h3>الخط</h3>
     <div class="fonts" id="fonts"></div>
-    <h3>الوضع</h3>
-    <div class="seg" id="modeSeg"><button data-mode="auto">تلقائي</button><button data-mode="light">فاتح</button><button data-mode="dark">داكن</button></div>
     <div class="menu-actions">
       <button class="btn ghost" id="helpShow">طريقة الاستخدام</button>
       <button class="btn ghost" id="signBtn">تسجيل الدخول</button>
@@ -509,8 +515,10 @@ const ITER_DOMAINS = [
   ["Scholarship", ["Lifelong learning","Teaching others","Evidence-based practice","Research"]]
 ];
 const ACCENTS = [
-  ["emerald","زمردي","#0f766e","#14b8a6"], ["ocean","محيطي","#1e40af","#0ea5e9"], ["violet","بنفسجي","#5b21b6","#d946ef"],
-  ["sunset","غروب","#c2410c","#e11d48"], ["rose","وردي","#be185d","#fb7185"], ["night","ليلي","#0f172a","#475569"]
+  ["ocean","محيطي","#1e40af","#0ea5e9"], ["sky","سماوي","#0369a1","#06b6d4"], ["indigo","نيلي","#3730a3","#6366f1"],
+  ["violet","بنفسجي","#5b21b6","#d946ef"], ["rose","وردي","#be185d","#fb7185"], ["wine","عنابي","#701a2e","#be123c"],
+  ["sunset","غروب","#c2410c","#e11d48"], ["gold","ذهبي","#92400e","#d97706"], ["coffee","قهوة","#44291a","#9a6b4f"],
+  ["emerald","زمردي","#0f766e","#14b8a6"], ["forest","أخضر","#14532d","#16a34a"], ["night","ليلي","#0f172a","#475569"]
 ];
 const LATIN = "IBM+Plex+Sans:wght@400;500;600;700";
 const FONTS = [
@@ -540,7 +548,7 @@ const COLL = ["entries","iter","reqs"];
 const empty = () => ({v:2, entries:{}, iter:{}, reqs:{}, settings:{target:11, min:8, iterTarget:12, t:0}});
 let session = LS.get(SESSION_KEY, null);
 let state = empty();
-let look = Object.assign({accent:"emerald", mode:"auto", font:"naskh"}, LS.get("r1t:look", {}));
+let look = Object.assign({accent:"ocean", mode:"light", font:"naskh"}, LS.get("r1t:look", {}));
 let dirty = false, inflight = false, retryTimer = null, saveTimer = null;
 const ui = {tab:"list", type:"all", remaining:false, rot:"", q:"", open:new Set([-1, 0]), dType:"all", dStatus:"all"};
 
@@ -1088,8 +1096,7 @@ function openMenu(){
 }
 function paintSettings(){
   $("#minVal").textContent = minReq(); $("#targetVal").textContent = target(); $("#iterVal").textContent = iterTarget();
-  $("#swatches").innerHTML = ACCENTS.map(a => `<button class="sw" data-accent="${a[0]}" aria-label="${a[1]}" aria-pressed="${look.accent===a[0]}" style="background:linear-gradient(135deg,${a[2]},${a[3]})"></button>`).join("");
-  $("#swl").innerHTML = ACCENTS.map(a => `<span>${a[1]}</span>`).join("");
+  $("#swatches").innerHTML = ACCENTS.map(a => `<div class="swc"><button class="sw" data-accent="${a[0]}" aria-label="${a[1]}" aria-pressed="${look.accent===a[0]}" style="background:linear-gradient(135deg,${a[2]},${a[3]})"></button><span>${a[1]}</span></div>`).join("");
   document.querySelectorAll("#modeSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === look.mode));
   FONTS.forEach(f => loadFont(f[2]));
   $("#fonts").innerHTML = FONTS.map(f => `<button class="fopt" data-font="${f[0]}" aria-pressed="${look.font===f[0]}" style="font-family:'IBM Plex Sans','${f[1]}'"><span class="smp">متتبع التقييمات · حسن</span><span class="nm">${f[3] || f[1]}</span></button>`).join("");
