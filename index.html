@@ -1,244 +1,429 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-accent="emerald">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>R1 Tracker · متتبع التقييمات</title>
-<meta name="description" content="متتبع تقييمات CBD و Mini-CEX و DOPS لمقيمي طب الأسرة R1">
-<meta name="theme-color" content="#0f766e">
+<meta name="description" content="متتبع تقييمات CBD و Mini-CEX و DOPS و ITER لمقيمي طب الأسرة R1">
+<meta name="theme-color" content="#0f766e" id="themeColor">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="R1 Tracker">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M18 33l9 9 19-20' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230f766e'/%3E%3Cstop offset='1' stop-color='%2314b8a6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M18 33l9 9 19-20' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230f766e'/%3E%3Cpath d='M18 33l9 9 19-20' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+try {
+  var L = JSON.parse(localStorage.getItem("r1t:look") || "{}");
+  if (L.accent) document.documentElement.dataset.accent = L.accent;
+  if (L.mode && L.mode !== "auto") document.documentElement.dataset.theme = L.mode;
+  document.documentElement.dataset.font = L.font || "naskh";
+} catch (e) {}
+</script>
 <style>
+:root{--a1:#0f766e;--a2:#14b8a6;--a-soft:#d5f2ed;--a-ink:#0b4f4a}
+[data-accent="ocean"]{--a1:#1e40af;--a2:#0ea5e9;--a-soft:#dbeafe;--a-ink:#1e3a8a}
+[data-accent="violet"]{--a1:#5b21b6;--a2:#d946ef;--a-soft:#ede4fd;--a-ink:#4c1d95}
+[data-accent="sunset"]{--a1:#c2410c;--a2:#e11d48;--a-soft:#fde5d8;--a-ink:#9a3412}
+[data-accent="rose"]{--a1:#be185d;--a2:#fb7185;--a-soft:#fce4ef;--a-ink:#9d174d}
+[data-accent="night"]{--a1:#0f172a;--a2:#475569;--a-soft:#e2e8f0;--a-ink:#0f172a}
 :root{
-  --bg:#f5f4ef; --surface:#ffffff; --surface-2:#efede6; --line:#e2dfd5;
-  --ink:#1c1b18; --ink-2:#55524a; --ink-3:#8a867b;
-  --brand:#0f766e; --brand-ink:#ffffff; --brand-soft:#d7efeb;
-  --cbd:#2563eb; --cbd-soft:#dbe6fd;
-  --mcx:#7c3aed; --mcx-soft:#ece3fd;
-  --dops:#c2410c; --dops-soft:#fbe4d6;
-  --ok:#15803d; --ok-soft:#dcf2e2; --warn:#a16207; --warn-soft:#fbf0cf; --bad:#b91c1c;
-  --on-ink:#ffffff; --radius:14px; --shadow:0 1px 2px rgba(20,18,10,.06),0 4px 14px rgba(20,18,10,.05);
-  color-scheme:light;
+  --bg:color-mix(in srgb,var(--a1) 4%,#f7f6f2);
+  --surface:#ffffff; --surface-2:#f1f0eb; --line:#e7e4dc;
+  --ink:#17160f; --ink-2:#4f4c44; --ink-3:#8a867b;
+  --cbd:#2563eb; --mcx:#8b2cf5; --dops:#f05a0e; --iter:#0d9488;
+  --ok:#16a34a; --ok-soft:#dcfce7; --warn:#b45309; --warn-soft:#fef3c7; --bad:#dc2626; --bad-soft:#fee2e2; --info:#2563eb; --info-soft:#dbeafe;
+  --on:#ffffff;
+  --shadow:0 1px 2px rgba(20,18,10,.05),0 8px 24px -8px rgba(20,18,10,.12);
+  --radius:18px; color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#141412; --surface:#1d1d1a; --surface-2:#262622; --line:#33332e;
-    --ink:#f0eee8; --ink-2:#bdb9ae; --ink-3:#8b877c;
-    --brand:#2dd4bf; --brand-ink:#0b2b28; --brand-soft:#173a36;
-    --cbd:#7aa2ff; --cbd-soft:#1f2b49; --mcx:#b794ff; --mcx-soft:#2f2547;
-    --dops:#fb923c; --dops-soft:#40271a;
-    --ok:#4ade80; --ok-soft:#173826; --warn:#facc15; --warn-soft:#3a3214; --bad:#f87171;
-    --on-ink:#121210; --shadow:none; color-scheme:dark;
+    --bg:#0f0f0e; --surface:#191917; --surface-2:#232320; --line:#2e2e2a;
+    --ink:#f2f0ea; --ink-2:#c2beb3; --ink-3:#8c887d;
+    --cbd:#6f9bff; --mcx:#b48aff; --dops:#ff8a4c; --iter:#2dd4bf;
+    --ok:#4ade80; --ok-soft:#14321f; --warn:#fbbf24; --warn-soft:#382c0e; --bad:#f87171; --bad-soft:#3a1717; --info:#7aa2ff; --info-soft:#1c2747;
+    --a-soft:color-mix(in srgb,var(--a2) 18%,#191917); --a-ink:color-mix(in srgb,var(--a2) 70%,#fff);
+    --on:#0f0f0e; --shadow:0 0 0 1px rgba(255,255,255,.02); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#141412; --surface:#1d1d1a; --surface-2:#262622; --line:#33332e;
-  --ink:#f0eee8; --ink-2:#bdb9ae; --ink-3:#8b877c;
-  --brand:#2dd4bf; --brand-ink:#0b2b28; --brand-soft:#173a36;
-  --cbd:#7aa2ff; --cbd-soft:#1f2b49; --mcx:#b794ff; --mcx-soft:#2f2547;
-  --dops:#fb923c; --dops-soft:#40271a;
-  --ok:#4ade80; --ok-soft:#173826; --warn:#facc15; --warn-soft:#3a3214; --bad:#f87171;
-  --on-ink:#121210; --shadow:none; color-scheme:dark;
+  --bg:#0f0f0e; --surface:#191917; --surface-2:#232320; --line:#2e2e2a;
+  --ink:#f2f0ea; --ink-2:#c2beb3; --ink-3:#8c887d;
+  --cbd:#6f9bff; --mcx:#b48aff; --dops:#ff8a4c; --iter:#2dd4bf;
+  --ok:#4ade80; --ok-soft:#14321f; --warn:#fbbf24; --warn-soft:#382c0e; --bad:#f87171; --bad-soft:#3a1717; --info:#7aa2ff; --info-soft:#1c2747;
+  --a-soft:color-mix(in srgb,var(--a2) 18%,#191917); --a-ink:color-mix(in srgb,var(--a2) 70%,#fff);
+  --on:#0f0f0e; --shadow:0 0 0 1px rgba(255,255,255,.02); color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 var(--font,"IBM Plex Sans Arabic"),system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;-webkit-tap-highlight-color:transparent;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px}
 .en{direction:ltr;unicode-bidi:isolate;display:inline-block}
 
-/* header */
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:12px;min-height:60px;padding-top:env(safe-area-inset-top)}
-.mark{width:34px;height:34px;border-radius:10px;background:var(--brand);display:grid;place-items:center;flex:none}
-.mark svg{width:20px;height:20px}
-.title{flex:1;min-width:0}
-.title h1{margin:0;font-size:16px;font-weight:700;line-height:1.2}
-.title p{margin:0;font-size:12.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sync{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
-.sync i{width:7px;height:7px;border-radius:50%;background:var(--ink-3)}
-.sync.ok i{background:var(--ok)} .sync.busy i{background:var(--warn);animation:pulse 1s infinite} .sync.off i{background:var(--bad)}
+/* Naskh needs a little more size and air */
+[data-font="naskh"] body{font-size:16.5px;line-height:1.65}
+[data-font="naskh"] .greet h1{font-size:28px}
+[data-font="naskh"] .brand{font-size:18px}
+[data-font="naskh"] .shead h2{font-size:21px}
+[data-font="naskh"] .sheet h2{font-size:23px}
+[data-font="naskh"] .ghead .nm{font-size:16px}
+[data-font="naskh"] .stg .lb,[data-font="naskh"] .nav button,[data-font="naskh"] .legend,[data-font="naskh"] .pct,[data-font="naskh"] .chip,[data-font="naskh"] .st,[data-font="naskh"] .rc .apv,[data-font="naskh"] .meta,[data-font="naskh"] .sub{font-size:13px}
+/* hero */
+.hero{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;padding:calc(10px + env(safe-area-inset-top)) 0 70px;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}
+.hero::before{width:320px;height:320px;top:-150px;left:-90px}
+.hero::after{width:220px;height:220px;bottom:-120px;right:8%}
+.bar-top{display:flex;align-items:center;gap:10px;min-height:52px;position:relative;z-index:1}
+.logo{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.logo svg{width:20px;height:20px}
+.brand{flex:1;min-width:0;font-weight:700;font-size:16px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:4px 11px;white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.7}
+.pill.ok i{background:#86efac;opacity:1} .pill.busy i{background:#fde68a;opacity:1;animation:pulse 1s infinite} .pill.off i{background:#fca5a5;opacity:1}
 @keyframes pulse{50%{opacity:.3}}
-.iconbtn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;flex:none}
-.iconbtn svg{width:18px;height:18px}
+.ibtn{width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center;flex:none}
+.ibtn svg{width:19px;height:19px}
+.greet{position:relative;z-index:1;margin-top:12px}
+.greet h1{margin:0;font-size:24px;line-height:1.25;font-weight:700}
+.greet p{margin:4px 0 0;opacity:.85;font-size:14px}
+.overall{display:flex;align-items:center;gap:10px;margin-top:12px}
+.overall .track{flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden}
+.overall .track div{height:100%;background:#fff;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.overall b{direction:ltr;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
 
-/* counters */
-.counters{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 10px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 12px 11px;box-shadow:var(--shadow);min-width:0}
-.card .k{font-weight:700;font-size:14px;direction:ltr;text-align:right}
-.card .sub{font-size:11.5px;color:var(--ink-3);line-height:1.35;min-height:2.7em}
-.card .num{display:flex;align-items:baseline;gap:4px;direction:ltr;justify-content:flex-end;margin-top:6px}
-.card .num b{font-size:30px;line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
-.card .num span{color:var(--ink-3);font-size:14px}
-.bar{height:7px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:8px 0 6px}
-.bar>div{height:100%;border-radius:99px;transition:width .35s ease}
-.card .st{font-size:12px;color:var(--ink-2)}
-.card.done .st{color:var(--ok);font-weight:600}
-.card[data-k="c"] .num b{color:var(--cbd)} .card[data-k="c"] .bar>div{background:var(--cbd)}
-.card[data-k="m"] .num b{color:var(--mcx)} .card[data-k="m"] .bar>div{background:var(--mcx)}
-.card[data-k="d"] .num b{color:var(--dops)} .card[data-k="d"] .bar>div{background:var(--dops)}
-.note-target{font-size:12px;color:var(--ink-3);margin:0 0 14px}
-.note-target button{background:none;border:0;padding:0;color:var(--brand);text-decoration:underline;font-size:12px}
+/* ring cards */
+.rings{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:-52px;position:relative;z-index:2}
+.rc{background:var(--surface);border-radius:var(--radius);padding:12px 6px 10px;box-shadow:var(--shadow);text-align:center;border:1px solid var(--line);min-width:0;cursor:pointer;transition:transform .15s}
+.rc:active{transform:scale(.97)}
+.ring{position:relative;width:72px;height:72px;margin:0 auto}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{stroke:var(--surface-2)}
+.ring .fg{transition:stroke-dashoffset .6s cubic-bezier(.2,.8,.2,1)}
+.ring .tick{stroke:var(--surface);stroke-width:3}
+.ring .mid{position:absolute;inset:0;display:grid;place-content:center;line-height:1;direction:ltr}
+.ring .mid b{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.ring .mid span{font-size:11px;color:var(--ink-3);margin-top:3px}
+.rc .k{font-weight:700;font-size:13.5px;margin-top:6px;direction:ltr}
+.rc .apv{font-size:11px;color:var(--ink-3);margin-top:1px}
+.chip{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.mid{background:var(--a-soft);color:var(--a-ink)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.rc[data-k="c"] .fg{stroke:var(--cbd)} .rc[data-k="c"] .mid b{color:var(--cbd)}
+.rc[data-k="m"] .fg{stroke:var(--mcx)} .rc[data-k="m"] .mid b{color:var(--mcx)}
+.rc[data-k="d"] .fg{stroke:var(--dops)} .rc[data-k="d"] .mid b{color:var(--dops)}
+.rc[data-k="i"] .fg{stroke:var(--iter)} .rc[data-k="i"] .mid b{color:var(--iter)}
+.legend{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--ink-3);margin:10px 0 2px;flex-wrap:wrap}
+.legend button{background:none;border:0;color:var(--a-ink);font-size:12px;text-decoration:underline;padding:0}
 
 /* help */
-.help{background:var(--brand-soft);border-radius:var(--radius);padding:12px 14px;margin:0 0 14px;position:relative}
-.help h2{font-size:14px;margin:0 0 6px}
-.help ol{margin:0;padding-inline-start:20px;font-size:13.5px;color:var(--ink-2)}
-.help li{margin:2px 0}
-.help .x{position:absolute;top:8px;left:8px;width:30px;height:30px;border:0;background:transparent;border-radius:8px;font-size:18px;color:var(--ink-2)}
+.help{background:var(--a-soft);border-radius:var(--radius);padding:14px 16px;margin:12px 0 4px;position:relative}
+.help h2{font-size:15px;margin:0 0 8px;color:var(--a-ink)}
+.steps{display:grid;gap:8px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{display:flex;gap:10px;font-size:13.5px;color:var(--ink-2);align-items:flex-start}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.help .x{position:absolute;top:8px;left:8px;width:32px;height:32px;border:0;background:transparent;border-radius:9px;font-size:20px;color:var(--ink-2)}
+
+/* section head */
+.shead{display:flex;align-items:center;gap:10px;margin:16px 0 4px}
+.shead h2{flex:1;margin:0;font-size:18px}
+.shead p{margin:2px 0 0;font-size:12.5px;color:var(--ink-3);font-weight:400}
+.addbtn{flex:none;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-weight:700;font-size:13.5px;padding:9px 14px;box-shadow:var(--shadow)}
+.addbtn svg{width:16px;height:16px}
 
 /* tools */
-.tools{position:sticky;top:61px;z-index:10;background:var(--bg);padding:8px 0 10px;display:grid;gap:8px}
+.tools{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0 6px;margin-top:4px}
 .search{position:relative}
-.search input{width:100%;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);padding:0 40px 0 12px;outline:none}
-.search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
-.search svg{position:absolute;right:12px;top:12px;width:18px;height:18px;color:var(--ink-3)}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
-.seg button{border:0;background:transparent;border-radius:8px;padding:5px 10px;font-size:13px;color:var(--ink-2);white-space:nowrap}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
-.toggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:5px 10px}
-.toggle[aria-pressed="true"]{border-color:var(--brand);color:var(--brand);background:var(--brand-soft);font-weight:600}
-select.rot{height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:0 8px;font-size:13px;max-width:100%}
+.search input{width:100%;height:46px;border-radius:14px;border:1px solid var(--line);background:var(--surface);padding:0 42px 0 14px;outline:none;box-shadow:var(--shadow)}
+.search input:focus{border-color:var(--a2);box-shadow:0 0 0 4px var(--a-soft)}
+.search svg{position:absolute;right:14px;top:14px;width:18px;height:18px;color:var(--ink-3)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.fchip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 13px;font-size:13px;color:var(--ink-2);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.fchip[aria-pressed="true"]{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff;font-weight:600}
+.fchip.add{border-style:dashed;color:var(--a-ink);font-weight:600}
+.fchip .n{opacity:.75;font-variant-numeric:tabular-nums}
+.fchip .dot{width:8px;height:8px;border-radius:50%}
+.sep{flex:none;width:1px;background:var(--line);margin:4px 2px}
 
-/* list */
-.group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin:0 0 10px;box-shadow:var(--shadow);overflow:hidden}
-.group>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none}
-.group>summary::-webkit-details-marker{display:none}
-.group>summary .nm{flex:1;font-weight:600;direction:ltr;text-align:right}
-.group>summary .ct{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;direction:ltr}
-.group>summary .chev{width:16px;height:16px;color:var(--ink-3);transition:transform .2s}
-.group[open]>summary .chev{transform:rotate(180deg)}
-.mini{width:54px;height:5px;border-radius:9px;background:var(--surface-2);overflow:hidden}
-.mini>div{height:100%;background:var(--brand)}
-.item{border-top:1px solid var(--line);padding:10px 14px}
-.item-h{display:flex;align-items:center;gap:10px}
-.item .name{flex:1;min-width:0;border:0;background:none;padding:2px 0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
-.item .name .t{direction:ltr;text-align:right;font-size:14px;line-height:1.4}
+/* groups + items */
+.group{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);margin:10px 0;box-shadow:var(--shadow);overflow:hidden}
+.ghead{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;width:100%;border:0;background:none;text-align:right}
+.ghead .nm{flex:1;font-weight:700;font-size:15px;text-align:right}
+.ghead .ct{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;direction:ltr}
+.gring{width:30px;height:30px;flex:none}
+.gring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gring .bg{stroke:var(--surface-2)} .gring .fg{stroke:var(--a2)}
+.chev{width:18px;height:18px;color:var(--ink-3);transition:transform .25s}
+.group.open .chev{transform:rotate(180deg)}
+.gbody{display:none}
+.group.open .gbody{display:block}
+.item{border-top:1px solid var(--line);padding:11px 16px}
+.item.has-done{background:color-mix(in srgb,var(--a-soft) 35%,transparent)}
+.item-h{display:flex;align-items:center;gap:12px}
+.item .name{flex:1;min-width:0;border:0;background:none;padding:2px 0;display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-align:right}
+.item .name .t{direction:ltr;text-align:right;font-size:14.5px;line-height:1.4}
+.item .name .t.ar{direction:rtl}
 .item .name .meta{font-size:11.5px;color:var(--ink-3)}
-.item.has-done .name .t{color:var(--ink)}
 .checks{display:flex;gap:6px;flex:none}
-.chk{border:1.5px solid var(--line);background:var(--surface);border-radius:9px;min-width:52px;height:34px;padding:0 9px;font-size:12.5px;font-weight:600;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;gap:4px;direction:ltr;transition:background .15s,border-color .15s,color .15s}
-.chk svg{width:13px;height:13px;display:none}
+.chk{position:relative;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;min-width:58px;height:38px;padding:0 10px;font-size:12.5px;font-weight:700;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;gap:5px;direction:ltr;transition:background .18s,border-color .18s,color .18s,transform .1s}
+.chk svg{width:14px;height:14px;display:none}
 .chk.on svg{display:block}
-.chk.c.on{background:var(--cbd);border-color:var(--cbd);color:var(--on-ink)}
-.chk.m.on{background:var(--mcx);border-color:var(--mcx);color:var(--on-ink)}
-.chk.d.on{background:var(--dops);border-color:var(--dops);color:var(--on-ink)}
-.chk:active{transform:scale(.96)}
-.details{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.details label{display:grid;gap:3px;font-size:12px;color:var(--ink-3)}
-.details input,.details textarea{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:7px 9px;font-size:14px;outline:none;width:100%}
-.details input:focus,.details textarea:focus{border-color:var(--brand)}
-.details .full{grid-column:1/-1}
-.details textarea{min-height:58px;resize:vertical}
-.warn{font-size:11.5px;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:5px 8px}
-.empty{text-align:center;color:var(--ink-3);padding:30px 10px}
+.chk.c.on{background:var(--cbd);border-color:var(--cbd);color:var(--on)}
+.chk.m.on{background:var(--mcx);border-color:var(--mcx);color:var(--on)}
+.chk.d.on{background:var(--dops);border-color:var(--dops);color:var(--on)}
+.chk:active{transform:scale(.94)}
+.chk .sd{position:absolute;top:-4px;left:-4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--surface)}
+.sd.s-p{background:var(--ink-3)} .sd.s-u{background:var(--warn)} .sd.s-a{background:var(--ok)} .sd.s-r{background:var(--bad)}
+.tbadge{display:inline-flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;border-radius:8px;padding:2px 8px;color:var(--on);direction:ltr;flex:none}
+.tbadge.c{background:var(--cbd)} .tbadge.m{background:var(--mcx)} .tbadge.d{background:var(--dops)}
+.details{margin-top:12px;display:grid;gap:12px;animation:fade .2s}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}}
+.dblock{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.dblock .hd{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-3)}
+.dblock label{display:grid;gap:3px;font-size:12px;color:var(--ink-3)}
+.dblock .full{grid-column:1/-1}
+.inp{border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:8px 10px;font-size:14px;outline:none;width:100%}
+.inp:focus{border-color:var(--a2);box-shadow:0 0 0 3px var(--a-soft)}
+textarea.inp{min-height:56px;resize:vertical}
+.warn{font-size:11.5px;color:var(--warn);background:var(--warn-soft);border-radius:9px;padding:6px 9px}
+.muted{font-size:12.5px;color:var(--ink-3)}
+.empty{text-align:center;color:var(--ink-3);padding:36px 16px;background:var(--surface);border:1px dashed var(--line);border-radius:var(--radius);margin:10px 0}
+.empty b{display:block;color:var(--ink-2);font-size:15px;margin-bottom:4px}
 
-footer{color:var(--ink-3);font-size:12px;padding:10px 0 40px;line-height:1.7}
+/* status pills */
+.st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.p,.st.n,.st.dr{background:var(--surface-2);color:var(--ink-2)}
+.st.u,.st.w,.st.rv{background:var(--warn-soft);color:var(--warn)}
+.st.a{background:var(--ok-soft);color:var(--ok)}
+.st.r,.st.rj,.st.in{background:var(--bad-soft);color:var(--bad)}
+.st.d,.st.sb{background:var(--info-soft);color:var(--info)}
 
-/* sheet / modal */
-.overlay{position:fixed;inset:0;background:rgba(10,10,8,.45);z-index:50;display:none;align-items:center;justify-content:center;padding:16px}
-.overlay.show{display:flex}
-.sheet{background:var(--surface);border-radius:18px;width:100%;max-width:420px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.25);max-height:92vh;overflow:auto}
-.sheet h2{margin:0 0 6px;font-size:19px}
+/* record cards (done / iter / reqs) */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;margin:10px 0;box-shadow:var(--shadow);display:block;width:100%;text-align:right;cursor:pointer;transition:transform .12s}
+.card:active{transform:scale(.99)}
+.card .top{display:flex;align-items:center;gap:8px}
+.card .ttl{flex:1;min-width:0;font-weight:600;font-size:14.5px}
+.card .ttl .en{display:inline}
+.card .sub{font-size:12px;color:var(--ink-3);margin-top:3px}
+.card .note{font-size:13px;color:var(--ink-2);margin-top:6px;background:var(--bg);border-radius:10px;padding:6px 9px;white-space:pre-wrap}
+.card .row{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.score{font-weight:700;font-variant-numeric:tabular-nums;direction:ltr}
+.statrow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0 4px}
+.statrow div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center}
+.statrow b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
+.statrow span{font-size:11.5px;color:var(--ink-3)}
+.intro{font-size:13px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0}
+
+
+/* status pipeline */
+.pipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin:10px 0;box-shadow:var(--shadow)}
+.pipehd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pipehd b{flex:1;font-size:14.5px}
+.lnk{border:0;background:none;color:var(--a-ink);font-size:12.5px;text-decoration:underline;padding:0}
+.lnk[aria-pressed="true"]{font-weight:700;text-decoration:none}
+.stages{display:flex;align-items:stretch;gap:4px}
+.stg{flex:1;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:10px 4px;display:grid;justify-items:center;gap:2px;min-width:0}
+.stg .num{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stg .lb{font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+.stg.p .num{color:var(--ink-2)} .stg.u .num{color:var(--warn)} .stg.a .num{color:var(--ok)} .stg.r .num{color:var(--bad)}
+.stg[aria-pressed="true"].p{border-color:var(--ink-3);background:var(--surface-2)}
+.stg[aria-pressed="true"].u{border-color:var(--warn);background:var(--warn-soft)}
+.stg[aria-pressed="true"].a{border-color:var(--ok);background:var(--ok-soft)}
+.stg[aria-pressed="true"].r{border-color:var(--bad);background:var(--bad-soft)}
+.stg.wide{width:100%;margin-top:8px;grid-auto-flow:column;justify-content:center;gap:8px;align-items:center}
+.stg.wide .num{font-size:16px}
+.arr{display:grid;place-items:center;color:var(--ink-3);flex:none;width:16px}
+.arr svg{width:16px;height:16px}
+.segbar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--surface-2);margin-top:12px;gap:2px}
+.sg.a{background:var(--ok)} .sg.u{background:var(--warn)} .sg.p{background:var(--ink-3);opacity:.5} .sg.r{background:var(--bad)}
+.pct{font-size:12px;color:var(--ink-3);margin-top:6px}
+.fonts{display:grid;gap:8px}
+.fopt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 14px;text-align:right}
+.fopt .smp{flex:1;font-size:18px}
+.fopt .nm{font-size:11.5px;color:var(--ink-3);font-family:system-ui,sans-serif;direction:ltr}
+.fopt[aria-pressed="true"]{border-color:var(--a2);background:var(--a-soft)}
+/* bottom nav */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom))}
+.nav .in{max-width:420px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.nav button{border:0;background:none;border-radius:14px;padding:6px 2px;display:grid;justify-items:center;gap:2px;font-size:11.5px;color:var(--ink-3)}
+.nav button svg{width:22px;height:22px}
+.nav button[aria-current="true"]{color:var(--a-ink);background:var(--a-soft);font-weight:700}
+
+footer{color:var(--ink-3);font-size:12px;padding:16px 0 20px;line-height:1.8;text-align:center}
+
+/* sheets */
+.overlay{position:fixed;inset:0;background:rgba(8,8,6,.5);z-index:50;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.overlay.show{display:flex;animation:fade .2s}
+.sheet{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:520px;padding:22px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.25);max-height:92vh;overflow:auto;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(40px);opacity:.4}}
+@media (min-width:600px){.overlay{align-items:center;padding:16px}.sheet{border-radius:24px}}
+.sheet h2{margin:0 0 6px;font-size:20px}
 .sheet p{margin:0 0 14px;color:var(--ink-2);font-size:14px}
-.field{display:grid;gap:4px;margin-bottom:12px;font-size:13px;color:var(--ink-2)}
-.field input,.field select{height:46px;border-radius:12px;border:1px solid var(--line);background:var(--bg);padding:0 12px;font-size:16px;outline:none}
-.field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
-.pin{letter-spacing:.5em;text-align:center;direction:ltr}
-.btn{width:100%;height:46px;border:0;border-radius:12px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:15px}
+.sheet h3{font-size:13px;color:var(--ink-3);font-weight:600;margin:16px 0 8px}
+.field{display:grid;gap:5px;margin-bottom:12px;font-size:13px;color:var(--ink-2)}
+.field input,.field select,.field textarea{min-height:46px;border-radius:13px;border:1px solid var(--line);background:var(--bg);padding:0 13px;font-size:15px;outline:none;width:100%}
+.field textarea{padding:10px 13px;min-height:70px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--a2);box-shadow:0 0 0 4px var(--a-soft)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pin{letter-spacing:.6em;text-align:center;direction:ltr}
+.btn{width:100%;height:48px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-weight:700;font-size:15px}
 .btn:disabled{opacity:.6}
-.btn.ghost{background:transparent;color:var(--ink-2);border:1px solid var(--line);font-weight:500}
+.btn.ghost{background:var(--surface-2);color:var(--ink);font-weight:500}
+.btn.danger{background:var(--bad-soft);color:var(--bad);font-weight:600}
+.btns{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:16px}
+.btns .btn.danger{width:auto;padding:0 18px}
 .err{color:var(--bad);font-size:13px;min-height:1.2em;margin:-4px 0 10px}
-.small{font-size:12px;color:var(--ink-3);margin-top:12px;line-height:1.6}
-.linkbtn{background:none;border:0;color:var(--ink-2);text-decoration:underline;font-size:13px;padding:8px 0;width:100%}
-.menu-list{display:grid;gap:8px}
+.small{font-size:12px;color:var(--ink-3);margin-top:12px;line-height:1.7}
+.linkbtn{background:none;border:0;color:var(--ink-2);text-decoration:underline;font-size:13px;padding:10px 0 0;width:100%}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1.5px solid var(--line);background:var(--surface);border-radius:11px;padding:7px 12px;font-size:13px;color:var(--ink-2)}
+.opt[aria-pressed="true"]{border-color:var(--a2);background:var(--a-soft);color:var(--a-ink);font-weight:700}
+.opt:disabled{opacity:.5}
+.opt.c[aria-pressed="true"]{border-color:var(--cbd);background:var(--cbd);color:var(--on)}
+.opt.m[aria-pressed="true"]{border-color:var(--mcx);background:var(--mcx);color:var(--on)}
+.opt.d[aria-pressed="true"]{border-color:var(--dops);background:var(--dops);color:var(--on)}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.sw{aspect-ratio:1;border-radius:14px;border:3px solid transparent;position:relative;padding:0}
+.sw[aria-pressed="true"]{border-color:var(--ink)}
+.sw[aria-pressed="true"]::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:16px}
+.swl{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;font-size:11px;color:var(--ink-3);text-align:center;margin-top:4px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;border-radius:10px;padding:8px 6px;font-size:13px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:var(--shadow)}
+.stepper{display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-radius:14px;padding:6px 6px 6px 14px;margin-bottom:8px}
+.stepper .lbl{font-size:14px}
+.stepper .lbl small{display:block;color:var(--ink-3);font-size:11.5px}
+.stepper .ctl{display:flex;align-items:center;gap:6px;direction:ltr}
+.stepper .ctl button{width:36px;height:36px;border-radius:10px;border:0;background:var(--surface);font-size:18px;font-weight:700;box-shadow:var(--shadow)}
+.stepper .ctl b{min-width:30px;text-align:center;font-size:17px;font-variant-numeric:tabular-nums}
+.menu-actions{display:grid;gap:8px;margin-top:18px}
+/* ITER self assessment */
+.selfbox{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.selfbox>summary{list-style:none;padding:12px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg);font-size:14px;font-weight:600}
+.selfbox>summary::-webkit-details-marker{display:none}
+.selfbox>summary .score{margin-inline-start:auto}
+.dom{padding:8px 14px 4px;border-top:1px solid var(--line)}
+.dom h4{margin:4px 0 6px;font-size:13px;color:var(--a-ink);direction:ltr;text-align:right}
+.qrow{display:flex;align-items:center;gap:8px;padding:5px 0}
+.qrow .q{flex:1;font-size:12.5px;direction:ltr;text-align:right;color:var(--ink-2)}
+.rate{display:flex;gap:4px;direction:ltr;flex:none}
+.rate button{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:12.5px;font-weight:700;color:var(--ink-3);padding:0}
+.rate button[aria-pressed="true"]{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent;color:#fff}
+.passbar{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3);padding:10px 14px;border-top:1px solid var(--line)}
 
-.toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:10px;font-size:13.5px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:13.5px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 @media (max-width:520px){
-  .counters{gap:8px}
-  .card{padding:10px 9px}
-  .card .num b{font-size:26px}
-  .card .sub{font-size:11px;min-height:0}
-  .card .sub .en,.card .sub br{display:none}
-  .tools{position:static}
-  .item-h{flex-wrap:wrap}
+  .rings{gap:6px}
+  .rc{padding:10px 3px 9px;border-radius:15px}
+  .ring{width:56px;height:56px}
+  .ring .mid b{font-size:18px}
+  .ring .mid span{font-size:10px}
+  .rc .k{font-size:12px}
+  .rc .apv{font-size:10px}
+  .chip{font-size:10px;padding:2px 6px}
+  .greet h1{font-size:21px}
+  .item-h{flex-wrap:wrap;gap:8px}
   .item .name{flex-basis:100%}
-  .checks{width:100%;justify-content:flex-start}
-  .chk{flex:1;max-width:140px}
-  .title p{display:none}
-  .details{grid-template-columns:1fr}
+  .checks{width:100%}
+  .chk{flex:1;max-width:160px}
+  .dblock{grid-template-columns:1fr}
+  .qrow{flex-wrap:wrap}
+  .qrow .q{flex-basis:100%}
 }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 
-<header class="top">
+<header class="hero">
   <div class="wrap">
-    <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <div class="title">
-      <h1>متتبع التقييمات</h1>
-      <p id="whoLine">طب الأسرة R1 · التجمع الصحي الأول</p>
+    <div class="bar-top">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <div class="brand">متتبع التقييمات</div>
+      <span class="pill" id="sync" hidden><i></i><span></span></span>
+      <button class="ibtn" id="menuBtn" aria-label="الإعدادات"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
-    <span class="sync" id="sync" hidden><i></i><span></span></span>
-    <button class="iconbtn" id="menuBtn" aria-label="القائمة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="greet">
+      <h1 id="hello">أهلاً 👋</h1>
+      <p id="helloSub">طب الأسرة R1 · التجمع الصحي الأول</p>
+      <div class="overall"><div class="track"><div id="ovBar" style="width:0"></div></div><b id="ovTxt">0 / 33</b></div>
+    </div>
   </div>
 </header>
 
 <div class="wrap">
-  <section class="counters" id="counters"></section>
-  <p class="note-target">الهدف <b id="targetLbl">11</b> من كل نوع في السنة حسب منهج الهيئة. <button id="targetLink">تغيير الهدف</button></p>
+  <section class="rings" id="rings"></section>
+  <div class="legend" id="legend"></div>
 
   <section class="help" id="help" hidden>
     <button class="x" id="helpX" aria-label="إغلاق">×</button>
     <h2>طريقة الاستخدام</h2>
-    <ol>
+    <ol class="steps">
       <li>إذا تقيّمت على حالة، اضغط زر نوع التقييم جنبها (CBD أو Mini-CEX أو DOPS) ويتلوّن.</li>
-      <li>اضغط على اسم الحالة إذا تبي تضيف التاريخ واسم المقيّم.</li>
-      <li>الحفظ تلقائي، والعدادات فوق تتحدث لحالها.</li>
+      <li>اضغط على اسم الحالة لتضيف التاريخ والمقيّم وحالة التقييم في ممارس بلس.</li>
+      <li>حالة مو موجودة في القائمة؟ اضغط "إضافة يدوية" واكتبها بنفسك.</li>
+      <li>تبويب "المنجز" يوريك كل تقييم وين وصل: ما رفعته، عند المقيّم، معتمد. وتبويب ITER لتقارير الروتيشنات.</li>
     </ol>
   </section>
 
-  <section class="tools">
-    <div class="search">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      <input id="q" type="search" placeholder="ابحث عن حالة… مثلاً Asthma" autocomplete="off" dir="auto">
-    </div>
-    <div class="row">
-      <div class="seg" role="group" aria-label="نوع التقييم">
-        <button data-type="all" aria-pressed="true">الكل</button>
-        <button data-type="c" aria-pressed="false"><span class="en">CBD · Mini-CEX</span></button>
-        <button data-type="d" aria-pressed="false"><span class="en">DOPS</span></button>
+  <!-- tab: checklist -->
+  <section id="tab-list">
+    <div class="tools">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="ابحث عن حالة… مثلاً Asthma" autocomplete="off" dir="auto">
       </div>
-      <button class="toggle" id="remaining" aria-pressed="false">المتبقي فقط</button>
-      <select class="rot" id="rot" aria-label="الروتيشن"><option value="">كل الروتيشنات</option></select>
+      <div class="chips" id="typeChips"></div>
+      <div class="chips" id="rotChips"></div>
     </div>
+    <main id="list"></main>
   </section>
 
-  <main id="list"></main>
+  <!-- tab: done -->
+  <section id="tab-done" hidden>
+    <div class="shead"><div style="flex:1"><h2>المنجز</h2><p>كل تقييم وين وصل في ممارس بلس</p></div>
+      <button class="addbtn" data-act="add-entry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>إضافة</button></div>
+    <div class="chips" id="doneType"></div>
+    <div class="pipe" id="pipe"></div>
+    <div id="doneList"></div>
+  </section>
+
+  <!-- tab: ITER -->
+  <section id="tab-iter" hidden>
+    <div class="shead"><div style="flex:1"><h2>ITER</h2><p>In-Training Evaluation Report · تقرير نهاية كل روتيشن</p></div>
+      <button class="addbtn" data-act="add-iter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>ITER جديد</button></div>
+    <div class="intro">المشرف يعبّي ITER في نهاية كل ٤ أسابيع، ودرجة النجاح 60%. سجّل هنا حالة كل واحد، وتقدر تسوي تقييم ذاتي كمسودة على نفس البنود الـ 24 عشان تعرف وين وضعك قبل تقييم المشرف.</div>
+    <div class="statrow" id="iterStats"></div>
+    <div id="iterList"></div>
+  </section>
 
   <footer>
     المصدر: خريطة التقييم (SFAM) في منهج البورد السعودي لطب الأسرة 2024. نفس الحالة ممكن تتكرر في أكثر من روتيشن، وهذا مقصود.<br>
-    العدادات للمتابعة الشخصية فقط، والسجل الرسمي هو ممارس بلس (Mumaris+).
+    هذي الصفحة للمتابعة الشخصية، والسجل الرسمي هو ممارس بلس (Mumaris+).
   </footer>
 </div>
+
+<nav class="nav"><div class="in" id="nav">
+  <button data-tab="list" aria-current="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>التقييمات</button>
+  <button data-tab="done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>المنجز</button>
+  <button data-tab="iter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>ITER</button>
+</div></nav>
 
 <!-- sign-in -->
 <div class="overlay" id="loginOv">
   <form class="sheet" id="loginForm" autocomplete="off">
     <h2>أهلاً 👋</h2>
-    <p>اكتب اسمك واختر رمز من ٤ أرقام. بنفس الاسم والرمز ترجع لتقدمك من أي جهاز.</p>
-    <label class="field">الاسم الكامل
-      <input id="inName" required minlength="3" maxlength="60" placeholder="مثلاً: محمد عبدالله القحطاني" dir="auto">
+    <p>اختر اسم مستخدم ورمز من ٤ أرقام. بنفس الاسم والرمز ترجع لتقدمك من أي جهاز.</p>
+    <label class="field">اسم المستخدم
+      <input id="inName" required minlength="3" maxlength="60" placeholder="أي اسم يناسبك، مثلاً: Dr.M" dir="auto">
     </label>
     <label class="field">الرمز (٤ أرقام)
       <input id="inPin" class="pin" required inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" type="password">
@@ -246,22 +431,33 @@ footer{color:var(--ink-3);font-size:12px;padding:10px 0 40px;line-height:1.7}
     <div class="err" id="loginErr"></div>
     <button class="btn" id="loginBtn" type="submit">ابدأ</button>
     <button class="linkbtn" type="button" id="localBtn">استخدمه بدون حساب (يحفظ على هذا الجهاز فقط)</button>
-    <div class="small">احفظ الرمز عندك. منسّق الصفحة يقدر يشوف أعداد التقييمات لمتابعة الدفعة، وما يقدر يشوف رمزك.</div>
+    <div class="small">مو لازم تكتب اسمك الحقيقي، اختر أي اسم تتذكره. احفظ الاسم والرمز عندك، لأنهم مفتاح رجوعك لتقدمك.</div>
   </form>
 </div>
 
-<!-- menu -->
+<!-- generic form sheet -->
+<div class="overlay" id="formOv"><form class="sheet" id="formSheet" autocomplete="off"></form></div>
+
+<!-- settings -->
 <div class="overlay" id="menuOv">
   <div class="sheet">
     <h2 id="menuName">الإعدادات</h2>
     <p id="menuSub"></p>
-    <div class="menu-list">
-      <label class="field">الهدف لكل نوع
-        <select id="targetSel">
-          <option value="11">11 · منهج الهيئة (تقييم كل ٤ أسابيع)</option>
-          <option value="8">8 · حسب ملاحظات الأورينتيشن</option>
-        </select>
-      </label>
+    <h3>العداد</h3>
+    <div class="stepper"><div class="lbl">الحد الأدنى<small>أقل عدد مطلوب من كل نوع</small></div>
+      <div class="ctl"><button data-step="min" data-d="-1">−</button><b id="minVal">8</b><button data-step="min" data-d="1">+</button></div></div>
+    <div class="stepper"><div class="lbl">الهدف الكامل<small>العدد اللي يكتمل عنده العداد</small></div>
+      <div class="ctl"><button data-step="target" data-d="-1">−</button><b id="targetVal">11</b><button data-step="target" data-d="1">+</button></div></div>
+    <div class="stepper"><div class="lbl">عدد ITER في السنة<small>تقرير لكل روتيشن ٤ أسابيع</small></div>
+      <div class="ctl"><button data-step="iterTarget" data-d="-1">−</button><b id="iterVal">12</b><button data-step="iterTarget" data-d="1">+</button></div></div>
+    <h3>لون الصفحة</h3>
+    <div class="swatches" id="swatches"></div>
+    <div class="swl" id="swl"></div>
+    <h3>الخط</h3>
+    <div class="fonts" id="fonts"></div>
+    <h3>الوضع</h3>
+    <div class="seg" id="modeSeg"><button data-mode="auto">تلقائي</button><button data-mode="light">فاتح</button><button data-mode="dark">داكن</button></div>
+    <div class="menu-actions">
       <button class="btn ghost" id="helpShow">طريقة الاستخدام</button>
       <button class="btn ghost" id="signBtn">تسجيل الدخول</button>
       <button class="btn ghost" id="outBtn">تسجيل الخروج من هذا الجهاز</button>
@@ -273,19 +469,48 @@ footer{color:var(--ink-3);font-size:12px;padding:10px 0 40px;line-height:1.7}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============ CONFIG ============
-   Paste your Apps Script web app URL between the quotes (ends with /exec).
-   Leave it empty to run in device-only mode. */
+/* ============ CONFIG ============ */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6d1XS9MGaYSfSwnaNvsn6pA_mvn4GRbUzfHhmfvd4syrfGboSdx5JGJ__UkQDERQrZQ/exec";
 /* ================================ */
 
 const DATA = {"rot":["Family Medicine","Internal Medicine","General Surgery","Adult Emergency","Pediatrics","Pediatric Emergency","Obstetrics & Gynecology","Psychiatry","Dermatology","Orthopedics / MSK","Ophthalmology","ENT","Radiology"],"items":[[1,0,"Diabetes Mellitus — Screening & Diagnosis","c"],[2,0,"Diabetes Mellitus — Management","c"],[3,0,"Diabetes Mellitus — Insulin Titration","c"],[4,0,"Hypertension — Screening & Diagnosis","c"],[5,0,"Hypertension — Management","c"],[6,0,"Dyslipidemia — Diagnosis & Management","c"],[7,0,"Asthma — Diagnosis & Management","c"],[8,0,"Asthma Exacerbation — Diagnosis & Management","c"],[9,0,"Upper Respiratory Infection — Diagnosis & Management","c"],[10,0,"Chest Infection — Diagnosis & Management","c"],[11,0,"Chest Pain — Diagnosis & Management","c"],[12,0,"Back Pain — Diagnosis & Management","c"],[13,0,"Osteoarthritis — Diagnosis & Management","c"],[14,0,"Joint Pain — Diagnosis & Management","c"],[15,0,"Small Joint Pain — Diagnosis & Management","c"],[16,0,"Headache — Diagnosis & Management","c"],[17,0,"Anemia — Diagnosis & Management","c"],[18,0,"Urinary Tract Infection — Diagnosis & Management","c"],[19,0,"Allergic Rhinitis — Diagnosis & Management","c"],[20,0,"Otitis Media — Diagnosis & Management","c"],[21,0,"Red Eye — Diagnosis & Management","c"],[22,0,"Gastroenteritis — Diagnosis & Management","c"],[23,0,"Allergy / Anaphylaxis — Diagnosis & Management","c"],[24,0,"Acne — Diagnosis & Management","c"],[25,0,"Dermatitis — Diagnosis & Management","c"],[26,0,"Skin Infections — Diagnosis & Management","c"],[27,0,"Hair Fall — Diagnosis & Management","c"],[28,0,"Dyspepsia — Diagnosis & Management","c"],[29,0,"Thyroid Disease — Diagnosis & Management","c"],[30,0,"Sexually Transmitted Diseases — Diagnosis & Management","c"],[31,0,"Anxiety — Diagnosis & Management","c"],[32,0,"Depression — Diagnosis & Management","c"],[33,0,"Somatic Symptom Disorder — Diagnosis & Management","c"],[34,0,"Menstrual Disorder — Diagnosis & Management","c"],[35,0,"Antenatal Care — Management","c"],[36,0,"Family Planning — Management","c"],[37,0,"Vaginal Discharge — Diagnosis & Management","c"],[38,0,"Women’s Periodic Health Maintenance — Management","c"],[39,0,"Well Baby Care — Management","c"],[40,0,"Health Promotion — Vaccination / Obesity / Smoking","c"],[41,0,"Glucose Check","d"],[42,0,"Blood Pressure Measurement","d"],[43,0,"Blood Extraction","d"],[44,0,"IV Cannula Insertion","d"],[45,0,"Intramuscular Injection","d"],[46,0,"Inhaler Techniques","d"],[47,0,"Peak Flow Meter","d"],[48,0,"Asthma Nebulizer","d"],[49,0,"Nasopharyngeal Swab","d"],[50,0,"Urine Dipstick","d"],[51,0,"Wound / Burn Dressing","d"],[52,0,"Wound Suturing","d"],[53,0,"Abscess Incision & Drainage","d"],[54,0,"Tuberculosis PPD Test","d"],[55,0,"Urethral Swab","d"],[56,0,"Urine Pregnancy Test","d"],[57,0,"ECG Installation & Interpretation","d"],[58,0,"Insulin Injection Techniques","d"],[59,0,"Ingrown Nail Procedure","d"],[60,0,"IUCD Insertion / Removal","d"],[61,0,"Pap Smear","d"],[62,0,"High Vaginal Swab","d"],[63,0,"Joint Injections & Aspiration","d"],[64,0,"Wood Lamp","d"],[65,0,"Warts Cryotherapy","d"],[66,0,"Biopsy of Skin Lesions","d"],[67,0,"Foley’s Catheter Insertion","d"],[68,0,"Nasal Packing / Silver Nitrate Application","d"],[69,0,"Application of Fluorescein Dye","d"],[70,1,"Heart Failure — Diagnosis & Management","c"],[71,1,"Chest Pain — Diagnosis & Management","c"],[72,1,"Hypertension — Diagnosis & Management","c"],[73,1,"Diabetes Mellitus — Diagnosis & Management","c"],[74,1,"Diabetes Mellitus — Insulin Titration","c"],[75,1,"Dyslipidemia — Diagnosis & Management","c"],[76,1,"Anemia — Diagnosis & Management","c"],[77,1,"Thyroid Disease — Diagnosis & Management","c"],[78,1,"Dyspepsia — Diagnosis & Management","c"],[79,1,"Asthma — Diagnosis & Management","c"],[80,1,"Asthma Exacerbation — Diagnosis & Management","c"],[81,1,"Chest Infection — Diagnosis & Management","c"],[82,1,"Stroke / Transient Ischemic Attack — Diagnosis & Management","c"],[83,1,"Headache — Diagnosis & Management","c"],[84,1,"Small Joint Pain — Diagnosis & Management","c"],[85,1,"Joint Pain — Diagnosis & Management","c"],[86,1,"Urinary Tract Infection — Diagnosis & Management","c"],[87,1,"Blood Pressure Measurement","d"],[88,1,"Glucose Check","d"],[89,1,"Blood Extraction","d"],[90,1,"IV Cannula Insertion","d"],[91,1,"ECG Installation & Interpretation","d"],[92,1,"Insulin Injection Techniques","d"],[93,1,"Inhaler Techniques","d"],[94,1,"Peak Flow Meter","d"],[95,1,"Asthma Nebulizer","d"],[96,1,"Urine Dipstick","d"],[97,1,"Foley’s Catheter Insertion","d"],[98,1,"Joint Injections & Aspiration","d"],[99,2,"Acute Abdomen — Diagnosis & Management","c"],[100,2,"Abdominal Pain — Clinical Assessment","c"],[101,2,"Skin Infections — Diagnosis & Management","c"],[102,2,"Foley’s Catheter Insertion","d"],[103,2,"IV Cannula Insertion","d"],[104,2,"Blood Extraction","d"],[105,2,"Wound / Burn Dressing","d"],[106,2,"Wound Suturing","d"],[107,2,"Abscess Incision & Drainage","d"],[108,2,"Ingrown Nail Procedure","d"],[109,2,"Biopsy of Skin Lesions","d"],[110,3,"Chest Pain — Diagnosis & Management","c"],[111,3,"Chest Infection — Diagnosis & Management","c"],[112,3,"Asthma Exacerbation — Diagnosis & Management","c"],[113,3,"Allergy / Anaphylaxis — Diagnosis & Management","c"],[114,3,"Acute Abdomen — Diagnosis & Management","c"],[115,3,"Headache — Diagnosis & Management","c"],[116,3,"Stroke / Transient Ischemic Attack — Diagnosis & Management","c"],[117,3,"Heart Failure — Diagnosis & Management","c"],[118,3,"Fractures — Diagnosis & Management","c"],[119,3,"Red Eye — Diagnosis & Management","c"],[120,3,"Gastroenteritis — Diagnosis & Management","c"],[121,3,"IV Cannula Insertion","d"],[122,3,"Blood Extraction","d"],[123,3,"Intramuscular Injection","d"],[124,3,"Glucose Check","d"],[125,3,"Blood Pressure Measurement","d"],[126,3,"ECG Installation & Interpretation","d"],[127,3,"Asthma Nebulizer","d"],[128,3,"Inhaler Techniques","d"],[129,3,"Peak Flow Meter","d"],[130,3,"Foley’s Catheter Insertion","d"],[131,3,"Wound Dressing","d"],[132,3,"Wound Suturing","d"],[133,3,"Abscess Incision & Drainage","d"],[134,3,"Casting / Splinting","d"],[135,3,"Nasal Packing / Silver Nitrate Application","d"],[136,3,"Urine Dipstick","d"],[137,3,"Joint Injections & Aspiration","d"],[138,3,"Application of Fluorescein Dye","d"],[139,4,"Gastroenteritis — Diagnosis & Management","c"],[140,4,"Allergy / Anaphylaxis — Diagnosis & Management","c"],[141,4,"Asthma — Diagnosis & Management","c"],[142,4,"Asthma Exacerbation — Diagnosis & Management","c"],[143,4,"Upper Respiratory Infection — Diagnosis & Management","c"],[144,4,"Chest Infection — Diagnosis & Management","c"],[145,4,"Otitis Media — Diagnosis & Management","c"],[146,4,"Well Baby Care — Management","c"],[147,4,"Dehydration IV Fluids Infusion Calculation","d"],[148,4,"IV Cannula Insertion","d"],[149,4,"Intramuscular Injection","d"],[150,4,"Glucose Check","d"],[151,4,"Blood Extraction","d"],[152,4,"Inhaler Techniques","d"],[153,4,"Peak Flow Meter","d"],[154,4,"Asthma Nebulizer","d"],[155,4,"Nasopharyngeal Swab","d"],[156,4,"Foley’s Catheter Insertion","d"],[157,5,"Allergy / Anaphylaxis — Diagnosis & Management","c"],[158,5,"Asthma Exacerbation — Diagnosis & Management","c"],[159,5,"Gastroenteritis — Diagnosis & Management","c"],[160,5,"Chest Infection — Diagnosis & Management","c"],[161,5,"Upper Respiratory Infection — Diagnosis & Management","c"],[162,5,"Intramuscular Injection","d"],[163,5,"IV Cannula Insertion","d"],[164,5,"Dehydration IV Fluids Infusion Calculation","d"],[165,5,"Glucose Check","d"],[166,5,"Blood Extraction","d"],[167,5,"Asthma Nebulizer","d"],[168,5,"Inhaler Techniques","d"],[169,5,"Peak Flow Meter","d"],[170,5,"Nasopharyngeal Swab","d"],[171,6,"High-Risk Pregnancy — Diagnosis & Management","c"],[172,6,"Antenatal Care — Management","c"],[173,6,"Menstrual Disorder — Diagnosis & Management","c"],[174,6,"Vaginal Discharge — Diagnosis & Management","c"],[175,6,"Family Planning — Management","c"],[176,6,"Women’s Periodic Health Maintenance — Management","c"],[177,6,"Sexually Transmitted Diseases — Diagnosis & Management","c"],[178,6,"Fetal Doppler Ultrasound","d"],[179,6,"Urine Pregnancy Test","d"],[180,6,"IUCD Insertion / Removal","d"],[181,6,"Pap Smear","d"],[182,6,"High Vaginal Swab","d"],[183,6,"Urethral Swab","d"],[184,6,"Blood Pressure Measurement","d"],[185,6,"Blood Extraction","d"],[186,6,"IV Cannula Insertion","d"],[187,7,"Anxiety — Diagnosis & Management","c"],[188,7,"Depression — Diagnosis & Management","c"],[189,7,"Somatic Symptom Disorder — Diagnosis & Management","c"],[190,8,"Acne — Diagnosis & Management","c"],[191,8,"Dermatitis — Diagnosis & Management","c"],[192,8,"Skin Infections — Diagnosis & Management","c"],[193,8,"Hair Fall — Diagnosis & Management","c"],[194,8,"Sexually Transmitted Diseases — Clinical Assessment","c"],[195,8,"Warts Cryotherapy","d"],[196,8,"Biopsy of Skin Lesions","d"],[197,8,"Wood Lamp","d"],[198,8,"Abscess Incision & Drainage","d"],[199,8,"Wound Dressing","d"],[200,8,"Wound Suturing","d"],[201,9,"Fractures — Diagnosis & Management","c"],[202,9,"Back Pain — Diagnosis & Management","c"],[203,9,"Osteoarthritis — Diagnosis & Management","c"],[204,9,"Joint Pain — Diagnosis & Management","c"],[205,9,"Small Joint Pain — Diagnosis & Management","c"],[206,9,"Musculoskeletal Trauma — Diagnosis","c"],[207,9,"Casting","d"],[208,9,"Joint Injections & Aspiration","d"],[209,9,"Wound Suturing","d"],[210,9,"Splinting / Immobilization","d"],[211,10,"Red Eye — Diagnosis & Management","c"],[212,10,"Application of Fluorescein Dye","d"],[213,10,"Eye Irrigation","d"],[214,10,"Superficial Foreign Body Removal","d"],[215,10,"Application of Eye Shield","d"],[216,10,"Upper Eyelid Eversion","d"],[217,11,"Otitis Media — Diagnosis & Management","c"],[218,11,"Allergic Rhinitis — Diagnosis & Management","c"],[219,11,"Vertigo — Diagnosis & Management","c"],[220,11,"Upper Respiratory Infection — Diagnosis & Management","c"],[221,11,"Nasal Packing","d"],[222,11,"Silver Nitrate Application / Nasal Cautery","d"],[223,11,"Audiometry","d"],[224,11,"Tympanometry","d"],[225,12,"Musculoskeletal Trauma — Diagnosis","c"],[226,12,"Fractures — Imaging Assessment","c"],[227,12,"Chest Pain — Imaging Assessment","c"],[228,12,"Chest Infection — Imaging Assessment","c"],[229,12,"Acute Abdomen — Imaging Assessment","c"],[230,12,"Stroke / Transient Ischemic Attack — Imaging Assessment","c"]]};
 const TYPES = {
-  c:{label:"CBD", full:"Case-Based Discussion", ar:"مناقشة حالة", avail:0},
-  m:{label:"Mini-CEX", full:"Mini Clinical Evaluation Exercise", ar:"تقييم سريري مصغّر", avail:0},
-  d:{label:"DOPS", full:"Direct Observation of Procedural Skills", ar:"مهارة إجرائية", avail:0}
+  c:{label:"CBD", ar:"مناقشة حالة"},
+  m:{label:"Mini-CEX", ar:"تقييم سريري مصغّر"},
+  d:{label:"DOPS", ar:"مهارة إجرائية"}
 };
-DATA.items.forEach(it => { if (it[3]==="d") TYPES.d.avail++; else { TYPES.c.avail++; TYPES.m.avail++; } });
+const ESTATUS = { p:"ما رفعته", u:"عند المقيّم", a:"معتمد", r:"مُرجَع أو مرفوض" };
+const ESTATUS_LONG = { p:"ما رفعته في ممارس بلس", u:"مرفوع · عند المقيّم بانتظار الاعتماد", a:"معتمد ✓", r:"مُرجَع أو مرفوض · يحتاج تعديل" };
+const ISTATUS = { n:"ما انفتح", dr:"مسودة ذاتية", w:"عند المشرف", a:"معتمد ومغلق" };
+const ITER_DOMAINS = [
+  ["Medical Knowledge", ["Adequate medical knowledge","Critical thinking & decision making"]],
+  ["Patient Care", ["Prevention & health promotion","Maternal & child care","Acute & urgent conditions","Chronic diseases","Planned care"]],
+  ["Communication & Collaboration", ["Communication with patients & colleagues","Teamwork","Documentation & confidentiality","Use of technology"]],
+  ["Management & Leadership", ["Resource stewardship","Quality improvement","Patient safety","Community health advocacy","Conflict management"]],
+  ["Professionalism", ["Ethics","Adherence to regulations","Professional behavior & responsibility","Physician wellbeing"]],
+  ["Scholarship", ["Lifelong learning","Teaching others","Evidence-based practice","Research"]]
+];
+const ACCENTS = [
+  ["emerald","زمردي","#0f766e","#14b8a6"], ["ocean","محيطي","#1e40af","#0ea5e9"], ["violet","بنفسجي","#5b21b6","#d946ef"],
+  ["sunset","غروب","#c2410c","#e11d48"], ["rose","وردي","#be185d","#fb7185"], ["night","ليلي","#0f172a","#475569"]
+];
+const LATIN = "IBM+Plex+Sans:wght@400;500;600;700";
+const FONTS = [
+  ["naskh","Scheherazade New","Scheherazade+New:wght@400;500;600;700","شهرزاد · نسخ"],
+  ["plex","IBM Plex Sans Arabic","IBM+Plex+Sans+Arabic:wght@400;500;600;700"],
+  ["almarai","Almarai","Almarai:wght@400;700;800"],
+  ["tajawal","Tajawal","Tajawal:wght@400;500;700"],
+  ["readex","Readex Pro","Readex+Pro:wght@400;500;600;700"],
+  ["alexandria","Alexandria","Alexandria:wght@400;500;600;700"],
+  ["kufi","Noto Kufi Arabic","Noto+Kufi+Arabic:wght@400;500;600;700"],
+  ["reem","Reem Kufi","Reem+Kufi:wght@400;500;600;700"]
+];
+function loadFont(spec){
+  if (document.querySelector(`link[data-f="${spec}"]`)) return;
+  const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.f = spec;
+  l.href = "https://fonts.googleapis.com/css2?family=" + spec + "&display=swap"; document.head.appendChild(l);
+}
+const ITEM_BY_ID = {}; DATA.items.forEach(it => ITEM_BY_ID[it[0]] = it);
 
 const LS = {
   get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } },
@@ -293,195 +518,454 @@ const LS = {
   del(k){ try { localStorage.removeItem(k); } catch(e){} }
 };
 const SESSION_KEY = "r1t:session";
-const empty = () => ({v:1, items:{}, settings:{target:11, t:0}});
-let session = LS.get(SESSION_KEY, null);     // {mode:"cloud"|"local", name, pin}
+const COLL = ["entries","iter","reqs"];
+const empty = () => ({v:2, entries:{}, iter:{}, reqs:{}, settings:{target:11, min:8, iterTarget:12, t:0}});
+let session = LS.get(SESSION_KEY, null);
 let state = empty();
-let dirty = false, inflight = false, retryTimer = null, saveTimer = null, lastError = "";
-const ui = {type:"all", remaining:false, rot:"", q:"", open:new Set([0])};
+let look = Object.assign({accent:"emerald", mode:"auto", font:"naskh"}, LS.get("r1t:look", {}));
+let dirty = false, inflight = false, retryTimer = null, saveTimer = null;
+const ui = {tab:"list", type:"all", remaining:false, rot:"", q:"", open:new Set([-1, 0]), dType:"all", dStatus:"all"};
 
 const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const dataKey = () => "r1t:data:" + (session && session.mode==="cloud" ? session.name.toLowerCase() : "local");
 const today = () => { const d = new Date(); return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10); };
+const uid = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const hasAr = s => /[؀-ۿ]/.test(s || "");
+const target = () => Math.max(1, +state.settings.target || 11);
+const minReq = () => Math.min(+state.settings.min || 8, target());
+const iterTarget = () => Math.max(1, +state.settings.iterTarget || 12);
 const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
 const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 
-function merge(a, b){
+/* ---------- data helpers ---------- */
+function migrate(s){
   const out = empty();
-  [a, b].forEach(src => Object.keys(src.items||{}).forEach(id => {
-    const cur = out.items[id], it = src.items[id];
-    if (!cur || (it.t||0) >= (cur.t||0)) out.items[id] = it;
-  }));
-  const sa = a.settings||{t:0}, sb = b.settings||{t:0};
-  out.settings = (sb.t||0) >= (sa.t||0) ? sb : sa;
-  if (!out.settings.target) out.settings.target = 11;
+  if (!s || typeof s !== "object") return out;
+  COLL.forEach(c => { if (s[c] && typeof s[c] === "object") out[c] = s[c]; });
+  if (s.items && typeof s.items === "object"){        // v1 format
+    Object.keys(s.items).forEach(id => {
+      const it = s.items[id] || {};
+      ["c","m","d"].forEach(k => {
+        if (it[k] && !out.entries[id+k]) out.entries[id+k] = {i:+id, k, dt:it.dt||"", a:it.a||"", n:it.n||"", s:"p", t:it.t||1};
+      });
+    });
+  }
+  out.settings = Object.assign(empty().settings, s.settings || {});
   return out;
 }
+function merge(a, b){
+  a = migrate(a); b = migrate(b);
+  const out = empty();
+  COLL.forEach(c => [a[c], b[c]].forEach(src => Object.keys(src).forEach(id => {
+    const cur = out[c][id], r = src[id];
+    if (!cur || (r.t||0) >= (cur.t||0)) out[c][id] = r;
+  })));
+  out.settings = (b.settings.t||0) >= (a.settings.t||0) ? b.settings : a.settings;
+  out.settings = Object.assign(empty().settings, out.settings);
+  return out;
+}
+const live = c => Object.entries(state[c]).filter(([, r]) => !r.x);
+const entryFor = (itemId, k) => { const e = state.entries[itemId + k]; return e && !e.x ? e : null; };
+function saveRec(c, id, patch){ state[c][id] = Object.assign({}, state[c][id] && !state[c][id].x ? state[c][id] : {}, patch, {t: Date.now()}); delete state[c][id].x; persist(); }
+function delRec(c, id){ state[c][id] = {x:1, t: Date.now()}; persist(); }
 function counts(){
-  const n = {c:0, m:0, d:0};
-  Object.values(state.items).forEach(it => { n.c += it.c?1:0; n.m += it.m?1:0; n.d += it.d?1:0; });
+  const n = {c:0, m:0, d:0, ca:0, ma:0, da:0};
+  live("entries").forEach(([, e]) => { if (n[e.k] == null) return; n[e.k]++; if (e.s === "a") n[e.k + "a"]++; });
+  const it = live("iter"); n.i = it.filter(([, r]) => r.s === "a").length; n.iAll = it.length;
   return n;
 }
-function item(id){ return state.items[id] || {c:0,m:0,d:0,dt:"",a:"",n:"",t:0}; }
-
-/* ---------- render ---------- */
-function renderCounters(){
-  const n = counts(), target = state.settings.target || 11;
-  $("#targetLbl").textContent = target;
-  $("#counters").innerHTML = ["c","m","d"].map(k => {
-    const t = TYPES[k], v = n[k], pct = Math.min(100, v/target*100), done = v >= target;
-    const st = done ? "✓ أكملت الهدف" : "باقي " + (target - v);
-    return `<div class="card${done?" done":""}" data-k="${k}">
-      <div class="k">${t.label}</div>
-      <div class="sub"><span class="en">${t.full}</span><br>${t.ar}</div>
-      <div class="num"><b>${v}</b><span>/ ${target}</span></div>
-      <div class="bar"><div style="width:${pct}%"></div></div>
-      <div class="st">${st}</div>
-    </div>`;
-  }).join("");
+function entryTitle(e){ if (e.i && ITEM_BY_ID[e.i]) return ITEM_BY_ID[e.i][2]; return e.ti || "بدون عنوان"; }
+function entryRot(e){ const r = e.i && ITEM_BY_ID[e.i] ? ITEM_BY_ID[e.i][1] : e.r; return r != null && r >= 0 && DATA.rot[r] ? DATA.rot[r] : ""; }
+const metaH = parts => parts.filter(Boolean).map(x => `<bdi>${esc(x)}</bdi>`).join(" · ");
+function fmtDate(d){ if (!d) return ""; try { return new Date(d+"T00:00:00").toLocaleDateString("ar-SA-u-ca-gregory-nu-latn",{day:"numeric",month:"short",year:"numeric"}); } catch(e){ return d; } }
+function fmtShort(d){ if (!d) return ""; try { return new Date(d+"T00:00:00").toLocaleDateString("ar-SA-u-ca-gregory-nu-latn",{day:"numeric",month:"short"}); } catch(e){ return d; } }
+function selfScore(r){
+  const v = Object.values(r.self || {}).map(Number).filter(x => x >= 1 && x <= 5);
+  return v.length ? {pct: Math.round(v.reduce((a,b)=>a+b,0) / (v.length*5) * 100), n: v.length} : null;
 }
 
-function matches(it){
-  const [id, r, name, kind] = it, s = item(id);
-  if (ui.type !== "all" && kind !== ui.type) return false;
+/* ---------- look ---------- */
+function applyLook(){
+  const root = document.documentElement;
+  root.dataset.accent = look.accent;
+  if (look.mode === "auto") delete root.dataset.theme; else root.dataset.theme = look.mode;
+  const a = ACCENTS.find(x => x[0] === look.accent) || ACCENTS[0];
+  $("#themeColor").setAttribute("content", a[2]);
+  const f = FONTS.find(x => x[0] === look.font) || FONTS[0];
+  loadFont(LATIN); loadFont(f[2]);
+  root.style.setProperty("--font", `"IBM Plex Sans","${f[1]}"`);
+  root.dataset.font = f[0];
+  LS.set("r1t:look", look);
+}
+
+/* ---------- hero ---------- */
+let lastCounts = null;
+function ringSVG(v, t, mn){
+  const r = 34, C = 2*Math.PI*r, pct = Math.min(1, v/t), ang = (mn/t) * 2*Math.PI;
+  const p = (rad) => [40 + rad*Math.cos(ang), 40 + rad*Math.sin(ang)];
+  const [x1,y1] = p(r-6), [x2,y2] = p(r+6);
+  return `<svg viewBox="0 0 80 80"><circle class="bg" cx="40" cy="40" r="${r}" fill="none" stroke-width="8"/>
+    <circle class="fg" cx="40" cy="40" r="${r}" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/>
+    ${mn && mn < t ? `<line class="tick" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke-linecap="round"/>` : ""}</svg>`;
+}
+function renderHero(){
+  const n = counts(), t = target(), mn = minReq(), it = iterTarget();
+  const cards = ["c","m","d"].map(k => {
+    const v = n[k];
+    const chip = v >= t ? `<span class="chip ok">اكتمل 🎉</span>` : v >= mn ? `<span class="chip mid">✓ الأدنى</span>` : `<span class="chip warn">باقي ${mn-v}</span>`;
+    return `<div class="rc" data-k="${k}" data-act="ring"><div class="ring">${ringSVG(v, t, mn)}<div class="mid"><b>${v}</b><span>/ ${t}</span></div></div>
+      <div class="k">${TYPES[k].label}</div><div class="apv">معتمد ${n[k+"a"]}</div>${chip}</div>`;
+  });
+  const ichip = n.i >= it ? `<span class="chip ok">اكتمل 🎉</span>` : `<span class="chip warn">باقي ${it-n.i}</span>`;
+  cards.push(`<div class="rc" data-k="i" data-act="ring"><div class="ring">${ringSVG(n.i, it, 0)}<div class="mid"><b>${n.i}</b><span>/ ${it}</span></div></div>
+    <div class="k">ITER</div><div class="apv">مسجّل ${n.iAll}</div>${ichip}</div>`);
+  $("#rings").innerHTML = cards.join("");
+  if (lastCounts) ["c","m","d"].forEach(k => {
+    if (lastCounts[k] < mn && n[k] >= mn) toast(`وصلت الحد الأدنى في ${TYPES[k].label} 👏`);
+    else if (lastCounts[k] < t && n[k] >= t) toast(`أكملت ${TYPES[k].label} كامل 🎉`);
+  });
+  lastCounts = n;
+  const done = Math.min(n.c,t)+Math.min(n.m,t)+Math.min(n.d,t), full = t*3;
+  $("#ovBar").style.width = (done/full*100) + "%";
+  $("#ovTxt").textContent = `${done} / ${full}`;
+  $("#legend").innerHTML = `<span>الحد الأدنى ${mn}</span><span>الهدف ${t}</span><button data-act="settings">تغيير</button>`;
+}
+$("#rings").addEventListener("click", e => {
+  const c = e.target.closest(".rc"); if (!c) return;
+  if (c.dataset.k === "i") return go("iter");
+  ui.dType = c.dataset.k; ui.dStatus = "all"; go("done");
+});
+$("#legend").addEventListener("click", e => { if (e.target.closest("[data-act=settings]")) openMenu(); });
+
+/* ---------- checklist tab ---------- */
+function renderTypeChips(){
+  const t = [["all","الكل"],["c","CBD"],["m","Mini-CEX"],["d","DOPS"]];
+  $("#typeChips").innerHTML = `<button class="fchip add" data-act="add-entry">${PLUS.replace('<svg','<svg width="14" height="14"')} إضافة يدوية</button><span class="sep"></span>` +
+    t.map(([v, l]) => `<button class="fchip" data-type="${v}" aria-pressed="${ui.type===v}">${v==="all"?l:`<span class="en">${l}</span>`}</button>`).join("") +
+    `<span class="sep"></span><button class="fchip" data-rem="1" aria-pressed="${ui.remaining}">المتبقي فقط</button>`;
+}
+function renderRotChips(){
+  $("#rotChips").innerHTML = `<button class="fchip" data-rot="" aria-pressed="${ui.rot===""}">كل الروتيشنات</button>` +
+    DATA.rot.map((n, i) => `<button class="fchip" data-rot="${i}" aria-pressed="${ui.rot===String(i)}"><span class="en">${esc(n)}</span></button>`).join("");
+}
+const kindsFor = it => it[3] === "d" ? ["d"] : ["c","m"];
+const shownKinds = it => kindsFor(it).filter(k => ui.type === "all" || ui.type === k);
+function itemMatches(it){
+  const [id, r, name] = it, ks = shownKinds(it);
+  if (!ks.length) return false;
   if (ui.rot !== "" && String(r) !== ui.rot) return false;
-  if (ui.remaining && (kind === "d" ? s.d : (s.c && s.m))) return false;
+  if (ui.remaining && ks.every(k => entryFor(id, k))) return false;
   if (ui.q && !name.toLowerCase().includes(ui.q) && !DATA.rot[r].toLowerCase().includes(ui.q)) return false;
   return true;
 }
-
+function chkBtn(id, k){
+  const e = entryFor(id, k);
+  return `<button class="chk ${k}${e?" on":""}" data-act="tick" data-k="${k}" aria-pressed="${!!e}">${e?`<span class="sd s-${e.s||"p"}" title="${ESTATUS[e.s||"p"]}"></span>`:""}${CHECK}${TYPES[k].label}</button>`;
+}
+function itemMeta(id){
+  const es = ["c","m","d"].map(k => entryFor(id, k)).filter(Boolean);
+  if (!es.length) return "";
+  const e = es.sort((a,b) => (b.t||0)-(a.t||0))[0];
+  return metaH([fmtShort(e.dt), e.a, es.some(x => x.n) ? "📝" : ""]);
+}
 function itemHTML(it){
-  const [id, , name, kind] = it, s = item(id);
-  const btn = k => `<button class="chk ${k}${s[k]?" on":""}" data-act="tick" data-k="${k}" aria-pressed="${!!s[k]}">${CHECK}${TYPES[k].label}</button>`;
-  const meta = [s.dt ? fmtDate(s.dt) : "", s.a].filter(Boolean).join(" · ");
-  const anyDone = s.c || s.m || s.d;
-  return `<div class="item${anyDone?" has-done":""}" data-id="${id}">
-    <div class="item-h">
-      <button class="name" data-act="open" aria-expanded="false"><span class="t">${esc(name)}</span>${meta?`<span class="meta">${esc(meta)}</span>`:""}</button>
-      <div class="checks">${kind==="d" ? btn("d") : btn("c")+btn("m")}</div>
-    </div>
-  </div>`;
+  const [id, , name] = it, ks = shownKinds(it), any = kindsFor(it).some(k => entryFor(id, k));
+  return `<div class="item${any?" has-done":""}" data-id="${id}">
+    <div class="item-h"><button class="name" data-act="open"><span class="t">${esc(name)}</span><span class="meta">${itemMeta(id)}</span></button>
+    <div class="checks">${ks.map(k => chkBtn(id, k)).join("")}</div></div></div>`;
 }
-
+function statusSelect(val, attrs){
+  return `<select class="inp" ${attrs}>${Object.entries(ESTATUS_LONG).map(([v,l]) => `<option value="${v}"${(val||"p")===v?" selected":""}>${l}</option>`).join("")}</select>`;
+}
 function detailsHTML(id){
-  const s = item(id);
-  return `<div class="details">
-    <label>التاريخ<input type="date" data-f="dt" value="${esc(s.dt)}"></label>
-    <label>المقيّم<input data-f="a" maxlength="80" placeholder="مثلاً: د. سارة" value="${esc(s.a)}" dir="auto"></label>
-    <label class="full">ملاحظات<textarea data-f="n" maxlength="300" placeholder="وش تعلمت، أو وش تحتاج تحسّن" dir="auto">${esc(s.n)}</textarea></label>
-    <div class="warn full">لا تكتب أي بيانات مريض (اسم، رقم ملف، هوية).</div>
-  </div>`;
+  const it = ITEM_BY_ID[id];
+  return `<div class="details">${shownKinds(it).map(k => {
+    const e = entryFor(id, k);
+    if (!e) return `<div class="dblock"><div class="hd"><span class="tbadge ${k}">${TYPES[k].label}</span>ما انتهى بعد · اضغط زر ${TYPES[k].label} لما تخلّصه</div></div>`;
+    return `<div class="dblock" data-k="${k}"><div class="hd"><span class="tbadge ${k}">${TYPES[k].label}</span><span class="st ${e.s||"p"}">${ESTATUS[e.s||"p"]}</span></div>
+      <label>التاريخ<input class="inp" type="date" data-f="dt" value="${esc(e.dt)}"></label>
+      <label>المقيّم<input class="inp" data-f="a" maxlength="80" placeholder="مثلاً: د. سارة" value="${esc(e.a)}" dir="auto"></label>
+      <label class="full">حالة التقييم في ممارس بلس${statusSelect(e.s, 'data-f="s"')}</label>
+      <label class="full">ملاحظات<textarea class="inp" data-f="n" maxlength="300" placeholder="وش تعلمت، أو وش تحتاج تحسّن" dir="auto">${esc(e.n)}</textarea></label>
+    </div>`;
+  }).join("")}<div class="warn">لا تكتب أي بيانات مريض (اسم، رقم ملف، هوية).</div></div>`;
 }
-
-function fmtDate(d){
-  try { return new Date(d+"T00:00:00").toLocaleDateString("ar-SA-u-ca-gregory-nu-latn",{day:"numeric",month:"short"}); } catch(e){ return d; }
+function groupStats(r){
+  let done = 0, total = 0;
+  DATA.items.forEach(it => { if (it[1] !== r) return; shownKinds(it).forEach(k => { total++; if (entryFor(it[0], k)) done++; }); });
+  return {done, total};
 }
-
+function gRing(done, total){
+  const r = 12, C = 2*Math.PI*r, p = total ? done/total : 0;
+  return `<svg viewBox="0 0 30 30"><circle class="bg" cx="15" cy="15" r="${r}" fill="none" stroke-width="4"/><circle class="fg" cx="15" cy="15" r="${r}" fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-p)}"/></svg>`;
+}
+function customMatches(e){
+  if (e.i) return false;
+  if (ui.type !== "all" && e.k !== ui.type) return false;
+  if (ui.rot !== "" && String(e.r) !== ui.rot) return false;
+  if (ui.remaining) return false;
+  if (ui.q && !(e.ti||"").toLowerCase().includes(ui.q)) return false;
+  return true;
+}
 function renderList(){
   const filtering = ui.q || ui.remaining || ui.type!=="all" || ui.rot!=="";
-  const groups = DATA.rot.map((name, r) => ({r, name, all:[], shown:[]}));
-  DATA.items.forEach(it => { groups[it[1]].all.push(it); if (matches(it)) groups[it[1]].shown.push(it); });
-  const html = groups.filter(g => g.shown.length).map(g => {
-    let done = 0, total = 0;
-    g.all.forEach(it => { const s = item(it[0]); if (it[3]==="d"){ total++; done += s.d?1:0; } else { total += 2; done += (s.c?1:0)+(s.m?1:0); } });
-    const open = filtering || ui.open.has(g.r);
-    return `<details class="group" data-r="${g.r}"${open?" open":""}>
-      <summary><span class="nm">${esc(g.name)}</span><span class="ct">${done} / ${total}</span><span class="mini"><div style="width:${total?done/total*100:0}%"></div></span>${CHEV}</summary>
-      ${g.shown.map(itemHTML).join("")}
-    </details>`;
-  }).join("");
-  $("#list").innerHTML = html || `<div class="empty">ما فيه حالات تطابق البحث.</div>`;
-}
-
-function render(){ renderCounters(); renderList(); }
-
-/* ---------- edits ---------- */
-function update(id, patch){
-  const s = Object.assign({}, item(id), patch, {t: Date.now()});
-  state.items[id] = s;
-  persist();
-}
-function persist(){
-  LS.set(dataKey(), state);
-  if (session && session.mode === "cloud" && SCRIPT_URL){
-    dirty = true;
-    setSync("busy", "جاري الحفظ…");
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(sync, 1200);
-  } else {
-    setSync("ok", "محفوظ على الجهاز");
+  const custom = live("entries").filter(([, e]) => customMatches(e)).sort((a,b) => (b[1].dt||"").localeCompare(a[1].dt||""));
+  let html = "";
+  if (custom.length){
+    const open = filtering || ui.open.has(-1);
+    html += `<section class="group${open?" open":""}" data-r="-1"><button class="ghead" data-act="group"><span class="gring">${gRing(1,1)}</span><span class="nm">إضافاتي اليدوية</span><span class="ct">${custom.length}</span>${CHEV}</button>
+      <div class="gbody">${custom.map(([id, e]) => `<div class="item has-done" data-eid="${id}"><div class="item-h">
+        <button class="name" data-act="edit-entry"><span class="t${hasAr(e.ti)?" ar":""}">${esc(e.ti)}</span><span class="meta">${metaH([entryRot(e), fmtShort(e.dt), e.a])}</span></button>
+        <div class="checks"><span class="tbadge ${e.k}">${TYPES[e.k].label}</span><span class="st ${e.s||"p"}">${ESTATUS[e.s||"p"]}</span></div></div></div>`).join("")}</div></section>`;
   }
+  const groups = DATA.rot.map((name, r) => ({r, name, shown:[]}));
+  DATA.items.forEach(it => { if (itemMatches(it)) groups[it[1]].shown.push(it); });
+  html += groups.filter(g => g.shown.length).map(g => {
+    const st = groupStats(g.r), open = filtering || ui.open.has(g.r);
+    return `<section class="group${open?" open":""}" data-r="${g.r}">
+      <button class="ghead" data-act="group"><span class="gring">${gRing(st.done, st.total)}</span><span class="nm"><span class="en">${esc(g.name)}</span></span><span class="ct">${st.done} / ${st.total}</span>${CHEV}</button>
+      <div class="gbody">${g.shown.map(itemHTML).join("")}</div></section>`;
+  }).join("");
+  $("#list").innerHTML = html || `<div class="empty"><b>ما فيه نتائج</b>جرّب كلمة ثانية، أو أضف الحالة يدوياً.</div>`;
+}
+function refreshItem(row){
+  const id = +row.dataset.id, it = ITEM_BY_ID[id];
+  row.classList.toggle("has-done", kindsFor(it).some(k => entryFor(id, k)));
+  row.querySelector(".meta").innerHTML = itemMeta(id);
+  row.querySelector(".checks").innerHTML = shownKinds(it).map(k => chkBtn(id, k)).join("");
+  const g = row.closest(".group");
+  if (g && g.dataset.r !== "-1"){ const st = groupStats(+g.dataset.r); g.querySelector(".ct").textContent = st.done + " / " + st.total; g.querySelector(".gring").innerHTML = gRing(st.done, st.total); }
 }
 
 $("#list").addEventListener("click", e => {
-  const b = e.target.closest("[data-act]");
-  if (!b) return;
-  const row = b.closest(".item"), id = row.dataset.id;
-  if (b.dataset.act === "tick"){
-    const k = b.dataset.k, s = item(id), on = !s[k];
-    const patch = {[k]: on ? 1 : 0};
-    if (on && !s.dt) patch.dt = today();
-    update(id, patch);
-    b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
-    const s2 = item(id);
-    row.classList.toggle("has-done", !!(s2.c||s2.m||s2.d));
-    refreshMeta(row, id);
-    const dt = row.querySelector('[data-f="dt"]'); if (dt) dt.value = s2.dt;
-    renderCounters(); refreshGroupCount(row.closest(".group"));
-    if (ui.remaining && (row.querySelector(".chk.d") ? s2.d : (s2.c && s2.m))) setTimeout(renderList, 450);
-  } else if (b.dataset.act === "open"){
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const act = b.dataset.act;
+  if (act === "group"){ const g = b.closest(".group"), r = +g.dataset.r; g.classList.toggle("open"); g.classList.contains("open") ? ui.open.add(r) : ui.open.delete(r); return; }
+  if (act === "edit-entry") return openEntry(b.closest(".item").dataset.eid);
+  const row = b.closest(".item"), id = +row.dataset.id;
+  if (act === "tick"){
+    const k = b.dataset.k, eid = id + k, on = !entryFor(id, k);
+    if (on){
+      const prev = state.entries[eid] && state.entries[eid].x ? {} : (state.entries[eid] || {});
+      saveRec("entries", eid, Object.assign({i:id, k, dt:today(), a:"", n:"", s:"p"}, prev.i ? prev : {}));
+    } else {
+      const e = entryFor(id, k);
+      if ((e.a || e.n) && !confirm("هذا التقييم فيه تفاصيل مسجّلة. تبي تلغيه؟")) return;
+      delRec("entries", eid);
+    }
+    if (navigator.vibrate) try { navigator.vibrate(on ? 12 : 6); } catch(err){}
+    refreshItem(row);
+    const det = row.querySelector(".details"); if (det){ det.remove(); row.insertAdjacentHTML("beforeend", detailsHTML(id)); }
+    renderHero();
+    if (ui.remaining && shownKinds(ITEM_BY_ID[id]).every(k => entryFor(id, k))) setTimeout(renderList, 500);
+  } else if (act === "open"){
     const ex = row.querySelector(".details");
-    if (ex){ ex.remove(); b.setAttribute("aria-expanded","false"); }
-    else { row.insertAdjacentHTML("beforeend", detailsHTML(id)); b.setAttribute("aria-expanded","true"); }
+    if (ex) ex.remove(); else row.insertAdjacentHTML("beforeend", detailsHTML(id));
   }
 });
-$("#list").addEventListener("input", e => {
+function onDetailEdit(e){
   const f = e.target.dataset.f; if (!f) return;
-  const row = e.target.closest(".item"), id = row.dataset.id;
-  update(id, {[f]: e.target.value});
-  refreshMeta(row, id);
-});
-$("#list").addEventListener("toggle", e => {
-  const g = e.target; if (!g.classList || !g.classList.contains("group")) return;
-  const r = +g.dataset.r; g.open ? ui.open.add(r) : ui.open.delete(r);
-}, true);
-
-function refreshMeta(row, id){
-  const s = item(id), name = row.querySelector(".name");
-  const meta = [s.dt ? fmtDate(s.dt) : "", s.a].filter(Boolean).join(" · ");
-  let m = name.querySelector(".meta");
-  if (meta){ if (!m){ m = document.createElement("span"); m.className = "meta"; name.appendChild(m); } m.textContent = meta; }
-  else if (m) m.remove();
+  const blk = e.target.closest(".dblock"), row = e.target.closest(".item"); if (!blk || !row) return;
+  const id = +row.dataset.id, k = blk.dataset.k;
+  saveRec("entries", id + k, {[f]: e.target.value});
+  if (f === "s"){ const st = blk.querySelector(".hd .st"); st.className = "st " + e.target.value; st.textContent = ESTATUS[e.target.value]; renderHero(); }
+  refreshItem(row);
 }
-function refreshGroupCount(g){
-  if (!g) return;
-  let done = 0, total = 0;
-  DATA.items.forEach(it => { if (String(it[1]) !== g.dataset.r) return; const s = item(it[0]); if (it[3]==="d"){ total++; done += s.d?1:0; } else { total += 2; done += (s.c?1:0)+(s.m?1:0); } });
-  g.querySelector(".ct").textContent = done + " / " + total;
-  g.querySelector(".mini>div").style.width = (total ? done/total*100 : 0) + "%";
-}
+$("#list").addEventListener("input", e => { if (e.target.tagName !== "SELECT") onDetailEdit(e); });
+$("#list").addEventListener("change", e => { if (e.target.tagName === "SELECT") onDetailEdit(e); });
 
-/* ---------- filters ---------- */
-document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
-  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x===b));
-  ui.type = b.dataset.type; renderList();
-}));
-$("#remaining").addEventListener("click", e => {
-  ui.remaining = !ui.remaining; e.currentTarget.setAttribute("aria-pressed", ui.remaining); renderList();
+$("#typeChips").addEventListener("click", e => {
+  const b = e.target.closest(".fchip"); if (!b) return;
+  if (b.dataset.act === "add-entry") return openEntry(null);
+  if (b.dataset.rem) ui.remaining = !ui.remaining; else ui.type = b.dataset.type;
+  renderTypeChips(); renderList();
 });
-DATA.rot.forEach((n, i) => $("#rot").insertAdjacentHTML("beforeend", `<option value="${i}">${esc(n)}</option>`));
-$("#rot").addEventListener("change", e => { ui.rot = e.target.value; renderList(); });
+$("#rotChips").addEventListener("click", e => {
+  const b = e.target.closest(".fchip"); if (!b) return;
+  ui.rot = b.dataset.rot; renderRotChips(); renderList();
+  const sel = document.querySelector(`#rotChips [data-rot="${ui.rot}"]`); if (sel) sel.scrollIntoView({inline:"center", block:"nearest", behavior:"smooth"});
+});
 let qT; $("#q").addEventListener("input", e => { clearTimeout(qT); qT = setTimeout(() => { ui.q = e.target.value.trim().toLowerCase(); renderList(); }, 120); });
 
-/* ---------- sync ---------- */
-function setSync(cls, text){
-  const el = $("#sync"); el.hidden = false; el.className = "sync " + cls; el.querySelector("span").textContent = text;
+/* ---------- done tab ---------- */
+function renderDone(){
+  const all = live("entries");
+  const byType = k => all.filter(([, e]) => k === "all" || e.k === k).length;
+  $("#doneType").innerHTML = [["all","الكل"],["c","CBD"],["m","Mini-CEX"],["d","DOPS"]].map(([v,l]) =>
+    `<button class="fchip" data-dt="${v}" aria-pressed="${ui.dType===v}">${v==="all"?l:`<span class="en">${l}</span>`}<span class="n">${byType(v)}</span></button>`).join("");
+  const pool = all.filter(([, e]) => ui.dType === "all" || e.k === ui.dType);
+  const byS = s => pool.filter(([, e]) => (e.s||"p") === s).length;
+  const tot = pool.length || 1, seg = s => `<div class="sg ${s}" style="flex:${byS(s)}"></div>`;
+  const stage = (s, i) => `<button class="stg ${s}" data-ds="${s}" aria-pressed="${ui.dStatus===s}"><span class="num">${byS(s)}</span><span class="lb">${ESTATUS[s]}</span></button>`;
+  const arrow = `<span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span>`;
+  $("#pipe").innerHTML = `<div class="pipehd"><b>وين وصلت تقييماتك؟</b><button class="lnk" data-ds="all" aria-pressed="${ui.dStatus==="all"}">عرض الكل (${pool.length})</button></div>
+    <div class="stages">${stage("p")}${arrow}${stage("u")}${arrow}${stage("a")}</div>
+    <div class="segbar">${pool.length ? seg("p") + seg("u") + seg("a") + seg("r") : ""}</div>
+    ${byS("r") ? `<button class="stg r wide" data-ds="r" aria-pressed="${ui.dStatus==="r"}"><span class="num">${byS("r")}</span><span class="lb">${ESTATUS.r} · يحتاج متابعة</span></button>` : ""}
+    <div class="pct">${pool.length ? `معتمد ${Math.round(byS("a")/tot*100)}% من اللي سويته` : ""}</div>`;
+  const list = pool.filter(([, e]) => ui.dStatus === "all" || (e.s||"p") === ui.dStatus)
+    .sort((a,b) => (b[1].dt||"").localeCompare(a[1].dt||"") || (b[1].t||0)-(a[1].t||0));
+  $("#doneList").innerHTML = list.length ? list.map(([id, e]) => {
+    const ttl = entryTitle(e), rot = entryRot(e);
+    return `<button class="card" data-eid="${id}">
+      <div class="top"><span class="tbadge ${e.k}">${TYPES[e.k].label}</span><span class="ttl">${hasAr(ttl)?esc(ttl):`<span class="en">${esc(ttl)}</span>`}</span></div>
+      <div class="sub">${metaH([rot, fmtDate(e.dt), e.a ? "المقيّم: " + e.a : "", e.i ? "" : "إضافة يدوية"])}</div>
+      ${e.n ? `<div class="note">${esc(e.n)}</div>` : ""}
+      <div class="row"><span class="st ${e.s||"p"}">${ESTATUS_LONG[e.s||"p"]}</span></div></button>`;
+  }).join("") : `<div class="empty"><b>${all.length ? "ما فيه تقييمات بهالفلتر" : "للحين ما سجّلت أي تقييم"}</b>${all.length ? "غيّر الفلتر فوق." : "أشّر على الحالات من تبويب التقييمات، أو أضف تقييم يدوياً."}</div>`;
 }
+$("#tab-done").addEventListener("click", e => {
+  const b = e.target.closest("[data-dt],[data-ds],[data-eid],[data-act]"); if (!b) return;
+  if (b.dataset.act === "add-entry") return openEntry(null, ui.dType !== "all" ? ui.dType : null);
+  if (b.dataset.dt){ ui.dType = b.dataset.dt; ui.dStatus = "all"; }
+  else if (b.dataset.ds) ui.dStatus = (ui.dStatus === b.dataset.ds && b.dataset.ds !== "all") ? "all" : b.dataset.ds;
+  else if (b.dataset.eid) return openEntry(b.dataset.eid);
+  renderDone();
+});
+
+/* ---------- generic form sheet ---------- */
+let formCtx = null;
+function optsHTML(name, map, val, cls){
+  return `<div class="opts" data-opts="${name}">${Object.entries(map).map(([v,l]) => `<button type="button" class="opt ${cls?v:""}" data-v="${v}" aria-pressed="${val===v}">${l}</button>`).join("")}</div>`;
+}
+function openForm(html, ctx){
+  formCtx = ctx; $("#formSheet").innerHTML = html; $("#formOv").classList.add("show");
+  const f = $("#formSheet").querySelector("[autofocus]"); if (f) setTimeout(() => f.focus(), 80);
+}
+function closeForm(){ $("#formOv").classList.remove("show"); formCtx = null; }
+$("#formOv").addEventListener("click", e => { if (e.target.id === "formOv") closeForm(); });
+$("#formSheet").addEventListener("click", e => {
+  const o = e.target.closest(".opt");
+  if (o && !o.disabled){ o.parentElement.querySelectorAll(".opt").forEach(x => x.setAttribute("aria-pressed", x === o)); if (formCtx && formCtx.onOpt) formCtx.onOpt(); return; }
+  const r = e.target.closest(".rate button");
+  if (r){ const q = r.closest(".rate"); const on = r.getAttribute("aria-pressed") !== "true"; q.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", on && x === r)); if (formCtx && formCtx.onOpt) formCtx.onOpt(); return; }
+  const b = e.target.closest("[data-fact]"); if (!b) return;
+  if (b.dataset.fact === "cancel") closeForm();
+  if (b.dataset.fact === "delete" && formCtx && formCtx.onDelete){ formCtx.onDelete(); closeForm(); }
+});
+$("#formSheet").addEventListener("submit", e => { e.preventDefault(); if (formCtx && formCtx.onSave && formCtx.onSave() !== false) closeForm(); });
+const fv = name => { const el = $("#formSheet").querySelector(`[name="${name}"]`); return el ? el.value.trim() : ""; };
+const fo = name => { const el = $("#formSheet").querySelector(`[data-opts="${name}"] [aria-pressed="true"]`); return el ? el.dataset.v : ""; };
+
+/* entry: manual add / edit */
+function openEntry(eid, presetK){
+  const e = eid ? state.entries[eid] : null, linked = e && e.i;
+  const k = e ? e.k : (presetK || (ui.type !== "all" ? ui.type : "c"));
+  const rotOpts = `<option value="-1">— بدون —</option>` + DATA.rot.map((n,i) => `<option value="${i}"${e && +e.r===i?" selected":""}>${esc(n)}</option>`).join("");
+  openForm(`<h2>${e ? "تفاصيل التقييم" : "إضافة تقييم يدوي"}</h2>
+    <p>${linked ? "من قائمة الحالات" : "لحالة أو إجراء مو موجود في القائمة"}</p>
+    <div class="field">نوع التقييم ${linked ? `<div class="opts"><span class="tbadge ${k}">${TYPES[k].label}</span></div>` : optsHTML("k", {c:"CBD", m:"Mini-CEX", d:"DOPS"}, k, true)}</div>
+    ${linked ? `<div class="field">الحالة<div class="en" style="font-weight:600">${esc(entryTitle(e))}</div></div>` :
+      `<label class="field">التشخيص أو الإجراء<input name="ti" required maxlength="120" placeholder="مثلاً: Gout flare أو Ingrown toenail" value="${esc(e ? e.ti : "")}" dir="auto" autofocus></label>
+       <label class="field">الروتيشن<select name="r">${rotOpts}</select></label>`}
+    <div class="two"><label class="field">التاريخ<input type="date" name="dt" value="${esc(e ? e.dt : today())}"></label>
+      <label class="field">المقيّم<input name="a" maxlength="80" placeholder="مثلاً: د. سارة" value="${esc(e ? e.a : "")}" dir="auto"></label></div>
+    <div class="field">حالة التقييم في ممارس بلس ${optsHTML("s", ESTATUS, e ? (e.s||"p") : "p")}</div>
+    <label class="field">ملاحظات<textarea name="n" maxlength="300" placeholder="وش تعلمت، أو وش تحتاج تحسّن" dir="auto">${esc(e ? e.n : "")}</textarea></label>
+    <div class="warn">لا تكتب أي بيانات مريض (اسم، رقم ملف، هوية).</div>
+    <div class="btns"><button class="btn" type="submit">حفظ</button>${e ? `<button class="btn danger" type="button" data-fact="delete">${linked ? "إلغاء التأشير" : "حذف"}</button>` : `<button class="btn ghost" type="button" data-fact="cancel" style="width:auto;padding:0 18px">إلغاء</button>`}</div>`,
+  {
+    onSave(){
+      const patch = {dt: fv("dt"), a: fv("a"), n: fv("n"), s: fo("s") || "p"};
+      if (!linked){ patch.ti = fv("ti"); patch.r = +fv("r"); patch.k = fo("k") || "c"; if (!patch.ti){ toast("اكتب اسم الحالة"); return false; } }
+      saveRec("entries", eid || uid("u"), linked ? patch : Object.assign({i:0}, patch));
+      toast(e ? "تم الحفظ ✓" : "انضاف التقييم ✓"); refreshAll();
+    },
+    onDelete(){ if (!confirm(linked ? "تبي تلغي هالتقييم؟" : "تبي تحذف هالتقييم؟")) return; delRec("entries", eid); refreshAll(); }
+  });
+}
+
+/* ---------- ITER tab ---------- */
+function renderIter(){
+  const all = live("iter"), c = s => all.filter(([, r]) => r.s === s).length;
+  $("#iterStats").innerHTML = `<div><b>${c("a")}</b><span>معتمد</span></div><div><b>${c("w")}</b><span>عند المشرف</span></div><div><b>${c("dr")}</b><span>مسودة</span></div><div><b>${Math.max(0, iterTarget()-c("a"))}</b><span>باقي</span></div>`;
+  const list = all.sort((a,b) => (b[1].dt||"").localeCompare(a[1].dt||""));
+  $("#iterList").innerHTML = list.length ? list.map(([id, r]) => {
+    const ss = selfScore(r);
+    return `<button class="card" data-iid="${id}"><div class="top"><span class="ttl">${hasAr(r.ti)?esc(r.ti):`<span class="en">${esc(r.ti)}</span>`}</span><span class="st ${r.s||"n"}">${ISTATUS[r.s||"n"]}</span></div>
+      <div class="sub">${metaH([fmtDate(r.dt), r.sup ? "المشرف: " + r.sup : ""])}</div>
+      <div class="row">${r.sc !== "" && r.sc != null ? `<span class="st ${+r.sc >= 60 ? "a" : "r"}">درجة المشرف <span class="score">${esc(r.sc)}%</span></span>` : ""}
+      ${ss ? `<span class="st d">تقييمي الذاتي <span class="score">${ss.pct}%</span></span>` : ""}</div>
+      ${r.n ? `<div class="note">${esc(r.n)}</div>` : ""}</button>`;
+  }).join("") : `<div class="empty"><b>للحين ما أضفت أي ITER</b>أضف ITER لكل روتيشن تخلّصه، وتابع حالته لين ينغلق.</div>`;
+}
+$("#tab-iter").addEventListener("click", e => {
+  const b = e.target.closest("[data-act],[data-iid]"); if (!b) return;
+  if (b.dataset.act === "add-iter") openIter(null); else if (b.dataset.iid) openIter(b.dataset.iid);
+});
+function openIter(iid){
+  const r = iid ? state.iter[iid] : {s:"n", self:{}};
+  const self = r.self || {};
+  let qi = 0;
+  const doms = ITER_DOMAINS.map(([d, qs]) => `<div class="dom"><h4>${d}</h4>${qs.map(q => { const i = qi++; return `<div class="qrow"><span class="q">${q}</span><div class="rate" data-q="${i}">${[1,2,3,4,5].map(v => `<button type="button" aria-pressed="${+self[i]===v}">${v}</button>`).join("")}</div></div>`; }).join("")}</div>`).join("");
+  openForm(`<h2>${iid ? "ITER" : "ITER جديد"}</h2>
+    <p>In-Training Evaluation Report</p>
+    <label class="field">الروتيشن أو البلوك<input name="ti" required maxlength="80" list="rotList" placeholder="مثلاً: Family Medicine · Block 1" value="${esc(r.ti)}" dir="auto" ${iid?"":"autofocus"}></label>
+    <datalist id="rotList">${DATA.rot.map(n => `<option value="${esc(n)}">`).join("")}</datalist>
+    <div class="two"><label class="field">نهاية الروتيشن<input type="date" name="dt" value="${esc(r.dt || today())}"></label>
+      <label class="field">المشرف<input name="sup" maxlength="80" value="${esc(r.sup)}" placeholder="اختياري" dir="auto"></label></div>
+    <div class="field">الحالة ${optsHTML("s", ISTATUS, r.s || "n")}</div>
+    <label class="field">درجة المشرف (%)<input name="sc" type="number" min="0" max="100" inputmode="decimal" value="${esc(r.sc)}" placeholder="بعد ما يعبّيه المشرف"></label>
+    <details class="selfbox"${selfScore(r) ? " open" : ""}><summary>📝 تقييمي الذاتي (مسودة)<span class="score" id="selfPct"></span></summary>${doms}
+      <div class="passbar" id="selfInfo"></div></details>
+    <label class="field">ملاحظات<textarea name="n" maxlength="400" placeholder="ملاحظات المشرف، أو وش تبي تحسّن" dir="auto">${esc(r.n)}</textarea></label>
+    <div class="btns"><button class="btn" type="submit">حفظ</button>${iid ? `<button class="btn danger" type="button" data-fact="delete">حذف</button>` : `<button class="btn ghost" type="button" data-fact="cancel" style="width:auto;padding:0 18px">إلغاء</button>`}</div>`,
+  {
+    onOpt: paintSelf,
+    onSave(){
+      const ti = fv("ti"); if (!ti){ toast("اكتب اسم الروتيشن"); return false; }
+      const selfN = {}; document.querySelectorAll("#formSheet .rate").forEach(q => { const on = q.querySelector('[aria-pressed="true"]'); if (on) selfN[q.dataset.q] = +on.textContent; });
+      const sc = fv("sc");
+      saveRec("iter", iid || uid("i"), {ti, dt: fv("dt"), sup: fv("sup"), s: fo("s") || "n", sc: sc === "" ? "" : Math.max(0, Math.min(100, +sc)), self: selfN, n: fv("n")});
+      toast("تم الحفظ ✓"); refreshAll();
+    },
+    onDelete(){ if (!confirm("تبي تحذف هالـ ITER؟")) return; delRec("iter", iid); refreshAll(); }
+  });
+  paintSelf();
+}
+function paintSelf(){
+  const vals = [...document.querySelectorAll("#formSheet .rate [aria-pressed='true']")].map(b => +b.textContent);
+  const pct = $("#selfPct"), info = $("#selfInfo"); if (!pct) return;
+  if (!vals.length){ pct.textContent = ""; info.textContent = "قيّم نفسك من 1 (Unsatisfactory) إلى 5 (Outstanding). اللي ما تقيّمه ما ينحسب."; return; }
+  const p = Math.round(vals.reduce((a,b)=>a+b,0) / (vals.length*5) * 100);
+  pct.textContent = p + "%";
+  info.innerHTML = `قيّمت ${vals.length} من 24 بند · ${p >= 60 ? `<span class="st a">فوق حد النجاح 60%</span>` : `<span class="st r">تحت حد النجاح 60%</span>`}`;
+}
+
+/* ---------- tabs ---------- */
+function go(tab){
+  ui.tab = tab;
+  ["list","done","iter"].forEach(t => $("#tab-" + t).hidden = t !== tab);
+  document.querySelectorAll("#nav button").forEach(b => b.setAttribute("aria-current", b.dataset.tab === tab));
+  renderTab();
+  const top = $("#tab-" + tab).getBoundingClientRect().top + scrollY - 10;
+  if (scrollY > top) scrollTo({top, behavior:"smooth"});
+}
+function renderTab(){
+  if (ui.tab === "list"){ renderTypeChips(); renderList(); }
+  else if (ui.tab === "done") renderDone();
+  else renderIter();
+}
+$("#nav").addEventListener("click", e => { const b = e.target.closest("button"); if (b) go(b.dataset.tab); });
+function refreshAll(){ renderHero(); renderTab(); }
+
+/* ---------- persistence + sync ---------- */
+function persist(){
+  LS.set(dataKey(), state);
+  if (session && session.mode === "cloud" && SCRIPT_URL && !session.paused){
+    dirty = true; setSync("busy", "جاري الحفظ…");
+    clearTimeout(saveTimer); saveTimer = setTimeout(sync, 1000);
+  } else setSync("ok", "محفوظ على الجهاز");
+}
+function setSync(cls, text){ const el = $("#sync"); el.hidden = false; el.className = "pill " + cls; el.querySelector("span").textContent = text; }
 async function call(payload){
   const res = await fetch(SCRIPT_URL, {method:"POST", body: JSON.stringify(payload)});
   if (!res.ok) throw new Error("http");
   return res.json();
 }
+const editing = () => document.querySelector(".details") || $("#formOv").classList.contains("show") || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
 async function sync(){
   if (!session || session.mode !== "cloud" || !SCRIPT_URL || session.paused) return;
   if (inflight){ dirty = true; return; }
@@ -496,14 +980,13 @@ async function sync(){
     state = merge(state, r.data);
     LS.set(dataKey(), state);
     setSync("ok", "محفوظ ✓");
-    if (!document.querySelector(".details")) render(); else renderCounters();
+    if (editing()) renderHero(); else refreshAll();
   } catch(err){
-    dirty = true;
-    setSync("off", "غير متصل · محفوظ على الجهاز");
+    dirty = true; setSync("off", "غير متصل · محفوظ على الجهاز");
     retryTimer = setTimeout(sync, 20000);
   } finally {
     inflight = false;
-    if (dirty && session && session.mode === "cloud") { clearTimeout(saveTimer); saveTimer = setTimeout(sync, 1200); }
+    if (dirty && session && session.mode === "cloud" && !session.paused){ clearTimeout(saveTimer); saveTimer = setTimeout(sync, 1000); }
   }
 }
 function flush(){
@@ -513,25 +996,22 @@ function flush(){
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); else if (session && session.mode==="cloud") sync(); });
 window.addEventListener("pagehide", flush);
 window.addEventListener("online", () => sync());
-
 function handleAuthLost(code){
   toast(code === "locked" ? "محاولات كثيرة. جرّب بعد ربع ساعة." : "الرمز تغيّر أو غير صحيح. سجّل دخولك مرة ثانية.");
-  session.paused = true;
-  setSync("off", "سجّل الدخول");
-  openLogin(session.name);
+  session.paused = true; setSync("off", "سجّل الدخول"); openLogin(session.name);
 }
 
 /* ---------- sign-in ---------- */
 const ERR = {
-  wrong_pin:"الاسم مسجّل برمز مختلف. تأكد من الرمز، وإذا شخص ثاني بنفس الاسم أضف اسمك الثلاثي.",
+  wrong_pin:"هالاسم مستخدم برمز مختلف. تأكد من الرمز، وإذا مو حسابك اختر اسم ثاني.",
   locked:"محاولات خاطئة كثيرة. جرّب بعد ربع ساعة.",
-  name:"اكتب اسمك الكامل.", pin:"الرمز لازم يكون ٤ أرقام.",
+  name:"اسم المستخدم لازم يكون ٣ أحرف أو أكثر.", pin:"الرمز لازم يكون ٤ أرقام.",
   net:"تعذّر الاتصال. تأكد من الإنترنت وجرّب مرة ثانية."
 };
 function openLogin(name){
   $("#inName").value = name || ""; $("#inPin").value = ""; $("#loginErr").textContent = "";
   $("#loginOv").classList.add("show");
-  setTimeout(() => (name ? $("#inPin") : $("#inName")).focus(), 50);
+  setTimeout(() => (name ? $("#inPin") : $("#inName")).focus(), 60);
 }
 $("#loginForm").addEventListener("submit", async e => {
   e.preventDefault();
@@ -539,7 +1019,6 @@ $("#loginForm").addEventListener("submit", async e => {
   if (name.length < 3) return $("#loginErr").textContent = ERR.name;
   if (!/^\d{4}$/.test(pin)) return $("#loginErr").textContent = ERR.pin;
   const btn = $("#loginBtn"); btn.disabled = true; btn.textContent = "لحظة…";
-  // bring along anything saved on this device (guest mode or a previous sign-in)
   const local = merge(LS.get("r1t:data:local", empty()), LS.get("r1t:data:" + name.toLowerCase(), empty()));
   try {
     const r = await call({name, pin, data: local});
@@ -547,17 +1026,13 @@ $("#loginForm").addEventListener("submit", async e => {
     session = {mode:"cloud", name: r.name, pin};
     LS.set(SESSION_KEY, session);
     state = merge(local, r.data);
-    LS.set(dataKey(), state);
-    LS.del("r1t:data:local");
+    LS.set(dataKey(), state); LS.del("r1t:data:local");
     $("#loginOv").classList.remove("show");
     afterSession();
     toast(r.created ? "تم إنشاء حسابك ✓" : "أهلاً " + r.name.split(" ")[0] + "، رجّعنا تقدمك ✓");
     if (!LS.get("r1t:helpSeen", false)) $("#help").hidden = false;
-  } catch(err){
-    $("#loginErr").textContent = ERR.net;
-  } finally {
-    btn.disabled = false; btn.textContent = "ابدأ";
-  }
+  } catch(err){ $("#loginErr").textContent = ERR.net; }
+  finally { btn.disabled = false; btn.textContent = "ابدأ"; }
 });
 $("#localBtn").addEventListener("click", () => {
   session = {mode:"local"}; LS.set(SESSION_KEY, session);
@@ -565,41 +1040,58 @@ $("#localBtn").addEventListener("click", () => {
   $("#loginOv").classList.remove("show"); afterSession();
   if (!LS.get("r1t:helpSeen", false)) $("#help").hidden = false;
 });
-
-function afterSession(){
+function renderHello(){
   const cloud = session && session.mode === "cloud";
-  $("#whoLine").textContent = cloud ? session.name : "على هذا الجهاز فقط";
-  setSync(cloud ? "ok" : "ok", cloud ? "محفوظ ✓" : "محفوظ على الجهاز");
-  $("#targetSel").value = String(state.settings.target || 11);
-  render();
+  const first = cloud ? session.name.split(" ")[0] : "";
+  $("#hello").textContent = first ? `أهلاً ${first} 👋` : "أهلاً 👋";
+  $("#helloSub").textContent = cloud ? "تقدمك محفوظ في حسابك" : "طب الأسرة R1 · التجمع الصحي الأول";
+}
+function afterSession(){
+  renderHello();
+  setSync("ok", session && session.mode === "cloud" ? "محفوظ ✓" : "محفوظ على الجهاز");
+  lastCounts = null; refreshAll();
 }
 
-/* ---------- menu ---------- */
+/* ---------- settings ---------- */
 $("#menuBtn").addEventListener("click", openMenu);
-$("#targetLink").addEventListener("click", openMenu);
 function openMenu(){
   const cloud = session && session.mode === "cloud";
   $("#menuName").textContent = cloud ? session.name : "الإعدادات";
   $("#menuSub").textContent = cloud ? "تقدمك محفوظ في حسابك ويرجع لك من أي جهاز." : "تقدمك محفوظ على هذا الجهاز فقط.";
   $("#signBtn").hidden = cloud || !SCRIPT_URL;
   $("#outBtn").hidden = !cloud;
-  $("#targetSel").value = String(state.settings.target || 11);
-  $("#menuOv").classList.add("show");
+  paintSettings(); $("#menuOv").classList.add("show");
 }
+function paintSettings(){
+  $("#minVal").textContent = minReq(); $("#targetVal").textContent = target(); $("#iterVal").textContent = iterTarget();
+  $("#swatches").innerHTML = ACCENTS.map(a => `<button class="sw" data-accent="${a[0]}" aria-label="${a[1]}" aria-pressed="${look.accent===a[0]}" style="background:linear-gradient(135deg,${a[2]},${a[3]})"></button>`).join("");
+  $("#swl").innerHTML = ACCENTS.map(a => `<span>${a[1]}</span>`).join("");
+  document.querySelectorAll("#modeSeg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === look.mode));
+  FONTS.forEach(f => loadFont(f[2]));
+  $("#fonts").innerHTML = FONTS.map(f => `<button class="fopt" data-font="${f[0]}" aria-pressed="${look.font===f[0]}" style="font-family:'IBM Plex Sans','${f[1]}'"><span class="smp">متتبع التقييمات · حسن</span><span class="nm">${f[3] || f[1]}</span></button>`).join("");
+}
+$("#fonts").addEventListener("click", e => { const b = e.target.closest(".fopt"); if (!b) return; look.font = b.dataset.font; applyLook(); paintSettings(); });
+$("#swatches").addEventListener("click", e => { const b = e.target.closest(".sw"); if (!b) return; look.accent = b.dataset.accent; applyLook(); paintSettings(); });
+$("#modeSeg").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; look.mode = b.dataset.mode; applyLook(); paintSettings(); });
+document.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+  const key = b.dataset.step, d = +b.dataset.d, s = Object.assign({}, state.settings);
+  if (key === "target") s.target = Math.min(30, Math.max(1, target() + d));
+  if (key === "min") s.min = Math.min(target(), Math.max(1, minReq() + d));
+  if (key === "iterTarget") s.iterTarget = Math.min(30, Math.max(1, iterTarget() + d));
+  s.min = Math.min(s.min || 8, s.target || 11);
+  s.t = Date.now(); state.settings = s; persist();
+  lastCounts = null; paintSettings(); renderHero(); if (ui.tab === "iter") renderIter();
+}));
 $("#menuClose").addEventListener("click", () => $("#menuOv").classList.remove("show"));
 $("#menuOv").addEventListener("click", e => { if (e.target.id === "menuOv") e.currentTarget.classList.remove("show"); });
-$("#targetSel").addEventListener("change", e => {
-  state.settings = {target: +e.target.value, t: Date.now()}; persist(); renderCounters();
-});
-$("#helpShow").addEventListener("click", () => { $("#menuOv").classList.remove("show"); $("#help").hidden = false; window.scrollTo({top:0, behavior:"smooth"}); });
+$("#helpShow").addEventListener("click", () => { $("#menuOv").classList.remove("show"); $("#help").hidden = false; $("#help").scrollIntoView({behavior:"smooth", block:"center"}); });
 $("#helpX").addEventListener("click", () => { $("#help").hidden = true; LS.set("r1t:helpSeen", true); });
 $("#signBtn").addEventListener("click", () => { $("#menuOv").classList.remove("show"); openLogin(""); });
 $("#outBtn").addEventListener("click", async () => {
-  if (dirty) { await sync(); }
+  if (dirty) await sync();
   if (dirty && !confirm("فيه تغييرات ما انحفظت في الحساب للحين. تبي تطلع؟")) return;
   LS.del(dataKey()); LS.del(SESSION_KEY); session = null; state = empty();
-  $("#menuOv").classList.remove("show"); render(); $("#sync").hidden = true;
-  $("#whoLine").textContent = "طب الأسرة R1 · التجمع الصحي الأول";
+  $("#menuOv").classList.remove("show"); lastCounts = null; refreshAll(); $("#sync").hidden = true; renderHello();
   openLogin("");
 });
 
@@ -608,16 +1100,14 @@ function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add
 
 /* ---------- start ---------- */
 (function start(){
+  applyLook(); renderRotChips();
   if (!SCRIPT_URL && (!session || session.mode !== "local")) session = {mode:"local"};
   if (session){
     state = merge(empty(), LS.get(dataKey(), empty()));
     afterSession();
     if (session.mode === "cloud") sync();
     else if (!LS.get("r1t:helpSeen", false)) $("#help").hidden = false;
-  } else {
-    render();
-    openLogin("");
-  }
+  } else { refreshAll(); openLogin(""); }
 })();
 </script>
 </body>
